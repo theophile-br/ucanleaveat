@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How long ++</title>
+    <link href="bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body class="gradient-anim rounded">
+    <div id="result-block">
+        <p class="info">updated <span id="last-update"></span></p>
+        <div class="row col-12 text-center">
+            <p class="p-1 m-0">U Can Leave At</p>
+            <h1 id="result" class="p-0 m-0"> - </h1>
+        </div>
+    </div>
+    <div id="have-to-update-block" class="row">
+        <h1 class="text-center">Please update your data</h1>
+    </div>
+    <div class="row justify-content-between">
+        <div class="col-auto">
+            <button id="update" class="p-2 btn btn-primary transparent col-auto">Update</button>
+        </div>
+        <div class="col-auto">
+            <label class="form-label col-auto" for="work-rate">Work rate (%)</label>
+            <input type="number" id="work-rate" class="p-2 ml-2 rounded transparent col-auto" value="100" min="50" max="100"
+                step="10" />
+        </div>
+    </div>
+</body>
+<script src="index.js" type="module"></script>
+<script src="bootstrap/bootstrap.bundle.min.js"></script>
+
+</html>

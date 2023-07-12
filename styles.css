@@ -1,0 +1,113 @@
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Roboto Light'), local('Roboto-Light'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/Pru33qjShpZSmG3z6VYwnT8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Roboto Regular'), local('Roboto-Regular'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/Xyjz-jNkfiYuJf8UC3Lizw.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 500;
+    src: local('Roboto Medium'), local('Roboto-Medium'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/oOeFwZNlrTefzLYmlVV1UD8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Roboto Bold'), local('Roboto-Bold'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/97uahxiqZRoncBaCEI3aWz8E0i7KZn-EPnyo3HZu7kw.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 300;
+    src: local('Roboto Light Italic'), local('Roboto-LightItalic'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/7m8l7TlFO-S3VkhHuR0at9Ih4imgI8P11RFo6YPCPC0.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 400;
+    src: local('Roboto Italic'), local('Roboto-Italic'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/dFWsweFqlD8ExfyN7Gh_GPesZW2xOQ-xsNqO47m55DA.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 500;
+    src: local('Roboto Medium Italic'), local('Roboto-MediumItalic'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/OLffGBTaF0XFOW1gnuHF0dIh4imgI8P11RFo6YPCPC0.woff) format('woff');
+}
+
+@font-face {
+    font-family: 'Roboto';
+    font-style: italic;
+    font-weight: 700;
+    src: local('Roboto Bold Italic'), local('Roboto-BoldItalic'), url(https://themes.googleusercontent.com/static/fonts/roboto/v9/t6Nd4cfPRhZP44Q5QAjcC9Ih4imgI8P11RFo6YPCPC0.woff) format('woff');
+}
+
+* {
+    font-family: Roboto;
+}
+
+body {
+    width: 400px;
+    padding: 10px;
+    color: aliceblue;
+}
+
+.transparent {
+    transition: all 500ms ease;
+    border : solid 3px white;
+    background-color: transparent;
+    color: white;
+    caret-color: transparent;
+}
+
+.transparent:focus {
+    border : solid 3px white;
+    background-color: white;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.transparent:hover {
+    border : solid 3px white;
+    background-color: white;
+    color: rgba(0, 0, 0, 0.5);;
+}
+
+.info {
+    font-size: small;
+}
+
+.gradient-anim {
+    background: linear-gradient(270deg, #a24bcf, #4b79cf, #4bc5cf);
+    background-size: 600% 600%;
+    -webkit-animation: GrandientAnimation 20s ease infinite;
+    -moz-animation: GrandientAnimation 20s ease infinite;
+    animation: GrandientAnimation 20s ease infinite;
+}
+
+@-webkit-keyframes GrandientAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes GrandientAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes GrandientAnimation {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
