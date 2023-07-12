@@ -1,6 +1,6 @@
 # UCanLeaveAt
 
-Shows when you can leave!
+It's an ATOSS Chrome extension that shows when you can leave!
 
 Features :
 
