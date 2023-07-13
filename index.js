@@ -112,7 +112,7 @@ export class UCanLeaveAtModel {
         const amoutOfBreakTime = recordsModel.filter(e => e.type == ERecordType.BREAK).reduce((a, b) => a + b.duration(), 0);
         const reamingMandatoryBreakTime = amoutOfBreakTime > this.mandatoryBreakTime ? 0 : this.mandatoryBreakTime - amoutOfBreakTime;
         const exceedAmoutOfBreakTime = reamingMandatoryBreakTime == 0 ? amoutOfBreakTime : 0; 
-        const realFullWorkTime = this.fullWorkTime * percentageOfWorkTimes;
+        const realFullWorkTime = Math.ceil(this.fullWorkTime * percentageOfWorkTimes);
         return {
             time: clockInTime + realFullWorkTime + reamingMandatoryBreakTime + exceedAmoutOfBreakTime,
             breakTime: reamingMandatoryBreakTime,
