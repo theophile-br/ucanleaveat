@@ -110,12 +110,16 @@ export class UCanLeaveAtModel {
         const clockInTime = recordsModel.find(e => e.type == ERecordType.PRESENCE).start ?? null;
 
         const amoutOfBreakTime = recordsModel.filter(e => e.type == ERecordType.BREAK).reduce((a, b) => a + b.duration(), 0);
-        const reamingMandatoryBreakTime = amoutOfBreakTime > this.mandatoryBreakTime ? 0 : this.mandatoryBreakTime - amoutOfBreakTime;
-        const exceedAmoutOfBreakTime = reamingMandatoryBreakTime == 0 ? amoutOfBreakTime : 0; 
+        
+        const remaingMandatoryBreakTime = amoutOfBreakTime >= this.mandatoryBreakTime ? 0 : this.mandatoryBreakTime - amoutOfBreakTime;
+
+        const exceedAmoutOfBreakTime = amoutOfBreakTime >= this.mandatoryBreakTime ? Math.abs(this.mandatoryBreakTime - amoutOfBreakTime) : 0; 
+
         const realFullWorkTime = Math.ceil(this.fullWorkTime * percentageOfWorkTimes);
+
         return {
-            time: clockInTime + realFullWorkTime + reamingMandatoryBreakTime + exceedAmoutOfBreakTime,
-            breakTime: reamingMandatoryBreakTime,
+            time: clockInTime + realFullWorkTime + exceedAmoutOfBreakTime + this.mandatoryBreakTime,
+            breakTime: remaingMandatoryBreakTime,
         }
 
     }
@@ -233,11 +237,13 @@ const main = async () => {
     const updateBtn = document.getElementById("update")
     const resultUI = document.getElementById("result")
     const lastUpdateUI = document.getElementById("last-update")
+    const flextimeUI = document.getElementById("flextime")
+    const breakUI = document.getElementById("break")
     const workRateUI = document.getElementById("work-rate");
     const resultBlock = document.getElementById("result-block");
     const haveToUpdateBlock = document.getElementById("have-to-update-block");
 
-    const updateUI = (lastUpdate,time, breakTime) =>  {
+    const updateUI = (lastUpdate,time, breakTime, flexTime) =>  {
         if (lastUpdate) {
             if(!DateTimeUtils.isToday(lastUpdate)) {
                 resultBlock.style.display = "none"
@@ -248,10 +254,13 @@ const main = async () => {
             }
             lastUpdateUI.textContent = DateTimeUtils.formatByTimestamp(lastUpdate)
         }
+        if(flexTime) {
+            flextimeUI.textContent = flexTime.split(":").join("h") + "m";
+        }
         if (time) {
             resultUI.innerHTML = `<strong>${DateTimeUtils.getMinsAsTime(time)}</strong>`
             if(breakTime && breakTime > 0) {
-                resultUI.innerHTML += `</br><span class="info"> ( including ${breakTime} minutes of break time )</span>`
+                breakUI.innerHTML = `<span class="info"> ( including ${breakTime} minutes of break time )</span>`
             }
         }
     }
@@ -265,7 +274,7 @@ const main = async () => {
         if (records) {
             const { time, breakTime } = howLong.getTimeOfLeavingWork(records,parseInt(workRateUI.value))
             const lastUpdateTimestamp = new Date().getTime();
-            updateUI(lastUpdateTimestamp, time, breakTime)
+            updateUI(lastUpdateTimestamp, time, breakTime,flextime)
             chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time, flexTime: flextime,  breakTime:breakTime, records: records })
         }
     })
@@ -285,12 +294,12 @@ const main = async () => {
 
     //Gathering Data
     chrome.storage.local.get(["lastUpdate", "time", "flexTime", "workRate", "breakTime","records"]).then((result) => {
-        updateUI(result.lastUpdate, result.time, result.breakTime)
+        updateUI(result.lastUpdate, result.time, result.breakTime,result.flexTime)
         if(result.time && result.breakTime) {
             const { time, breakTime } = howLong.getTimeOfLeavingWork(records,parseInt(workRateUI.value))
             const lastUpdateTimestamp = new Date().getTime();
             updateUI(lastUpdateTimestamp, time, breakTime)
-            chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time, flexTime: flextime,  breakTime:breakTime, records: records })
+            chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time,  breakTime:breakTime })
         }
         workRateUI.value = result.workRate ?? 100;
     });

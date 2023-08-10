@@ -18,7 +18,7 @@ describe('HowLong', function () {
                 }
             ]
 
-            const expectedTimeOfLeavingWork = getMinutes(9, 0) + 492 + 30;
+            const expectedTimeOfLeavingWork = getMinutes(9, 0) + getMinutes(8, 12) + 30;
 
             const howLong = new UCanLeaveAtModel();
             const data = howLong.getTimeOfLeavingWork(records);
@@ -41,7 +41,7 @@ describe('HowLong', function () {
                 }
             ]
 
-            const expectedTimeOfLeavingWork = getMinutes(9, 0) + 492 + 10;
+            const expectedTimeOfLeavingWork = getMinutes(9, 0) + getMinutes(8, 12) + getMinutes(0, 30);
 
             const howLong = new UCanLeaveAtModel();
             const data = howLong.getTimeOfLeavingWork(records);
@@ -64,7 +64,7 @@ describe('HowLong', function () {
                 }
             ]
 
-            const expectedTimeOfLeavingWork = getMinutes(9, 0) + 492 + 50;
+            const expectedTimeOfLeavingWork = getMinutes(9, 0) + getMinutes(8, 12) + 50;
 
             const howLong = new UCanLeaveAtModel();
             const data = howLong.getTimeOfLeavingWork(records);
@@ -99,5 +99,33 @@ describe('HowLong', function () {
             equal(data.time, expectedTimeOfLeavingWork);
             equal(data.breakTime, 0);
         })
+
+        it("When you have two Presence (with one on going) and one Break", () => {
+            DateTimeUtils.minutesNow = () => getMinutes(17, 12)
+            const records = [
+                {
+                    "start": getMinutes(9, 12),
+                    "end": getMinutes(11, 57),
+                    "type": "Presence"
+                },
+                {
+                    "start": getMinutes(11, 57),
+                    "end": getMinutes(12, 26),
+                    "type": "Break"
+                },
+                {
+                    "start": getMinutes(12, 26),
+                    "end": null,
+                    "type": "Presence"
+                }
+            ]
+
+            const expectedTimeOfLeavingWork = getMinutes(17, 54);
+
+            const howLong = new UCanLeaveAtModel();
+            const data = howLong.getTimeOfLeavingWork(records);
+            equal(data.time, expectedTimeOfLeavingWork);
+            equal(data.breakTime, 1);
+        })        
     })
 });
