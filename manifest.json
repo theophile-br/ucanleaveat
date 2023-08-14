@@ -1,0 +1,18 @@
+{
+    "name": "U Can Leave At",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "icons": {
+        "128": "fav.png"
+      },
+    "manifest_version": 3,
+    "version": "1.0",
+    "description": "Manage your working Time",
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "scripting",
+        "storage"
+    ]
+}
