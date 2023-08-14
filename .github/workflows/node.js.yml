@@ -24,7 +24,7 @@ jobs:
     - run: npm ci
     - run: npm test
 
-name: Update Chrome Extension
+# name: Update Chrome Extension
 
 # on:
 #   push:
