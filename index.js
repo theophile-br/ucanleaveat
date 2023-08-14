@@ -261,6 +261,8 @@ const main = async () => {
             resultUI.innerHTML = `<strong>${DateTimeUtils.getMinsAsTime(time)}</strong>`
             if(breakTime && breakTime > 0) {
                 breakUI.innerHTML = `<span class="info"> ( including ${breakTime} minutes of break time )</span>`
+            } else {
+                breakUI.innerHTML = ``
             }
         }
     }
