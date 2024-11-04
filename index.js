@@ -10,7 +10,7 @@ const ERecordType = {
 
 export class DateTimeUtils {
     static now = () => new Date();
-    static minutesNow = () => DateTimeUtils.getDateInMins(new Date())
+    static minutesNow = () => DateTimeUtils.convertDateToMinutes(new Date())
 
     static isToday(timeStamp) {
         const date = new Date();
@@ -34,15 +34,6 @@ export class DateTimeUtils {
             date.getFullYear() === yesterday.getFullYear();
     }
 
-    static formatHour(date) {
-        const pad = (num) => {
-            return ('00' + num).substr(-2);
-        }
-        const hours = date.getHours();
-        const minutes = date.getMinutes();
-        return `${hours}h${pad(minutes)}m`;
-    }
-
     static formatDate(date) {
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -58,7 +49,7 @@ export class DateTimeUtils {
 
     static formatByDate(date) {
         const fDate = this.formatDate(date);
-        const fHour = this.formatHour(date);
+        const fHour = this.convertDateToTime(date);
 
         return `${fDate} at ${fHour}`
     }
@@ -69,17 +60,53 @@ export class DateTimeUtils {
         return this.formatByDate(date);
     }
 
-    static getMinsAsTime = (mins) => {
+    // Convert Date Object to Time eg. 01:32
+    static convertDateToTime(date) {
         const pad = (num) => {
             return ('00' + num).substr(-2);
         }
-        var hours = Math.floor(mins / 60);
-        var minutes = mins % 60;
-        return hours + "h" + pad(minutes) + "m";
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return `${pad(hours)}:${pad(minutes)}`;
     }
 
-    static getDateInMins(time){
-        return time.getHours() * 60 + time.getMinutes()
+    // Convert Minutes to Time format (e.g., 120 to "02:00" or -75 to "-01:15")
+    static convertMinutesToTime(minutes) {
+        const isNegative = minutes < 0;
+        const absoluteMinutes = Math.abs(minutes);
+    
+        const hours = Math.floor(absoluteMinutes / 60);
+        const remainingMinutes = absoluteMinutes % 60;
+    
+        const hoursString = String(hours).padStart(2, '0');
+        const minutesString = String(remainingMinutes).padStart(2, '0');
+    
+        return (isNegative ? '-' : '') + `${hoursString}:${minutesString}`;
+    }
+
+    // Convert Date to Minutes
+    static convertDateToMinutes(date) {
+        return date.getHours() * 60 + date.getMinutes()
+    }
+
+    //Convert Minutes to Time eg. 02:00 to 120
+    static convertTimeToMinutes(time) {
+        var isNegative = false
+        if (time[0] == "-") {
+            isNegative = true
+            time = time.substring(1)
+        }
+        const [hoursString, minutesString] = time.split(':');
+        const hours = parseInt(hoursString);
+        const minutes = parseInt(minutesString);
+
+        if (isNaN(hours) || isNaN(minutes)) {
+            console.error("Erreur de parsing : format de temps invalide");
+            return NaN;
+        }
+
+        const totalMinutes = hours * 60 + minutes;
+        return isNegative ? -totalMinutes : totalMinutes;
     }
 
 }
@@ -89,7 +116,7 @@ export class AtossRecord {
     end;
     type;
 
-    constructor(start,end,type){
+    constructor(start, end, type) {
         this.start = start;
         this.end = end;
         this.type = type;
@@ -105,24 +132,30 @@ export class UCanLeaveAtModel {
     fullWorkTime = 492; // min (8 hours 12 minutes)
 
     getTimeOfLeavingWork(records, percentageOfWorkTimes = 100) {
-        const recordsModel = records.map(e => new AtossRecord(e.start,e.end,e.type))
+        const recordsModel = records.map(e => new AtossRecord(e.start, e.end, e.type))
         percentageOfWorkTimes /= 100;
         const clockInTime = recordsModel.find(e => e.type == ERecordType.PRESENCE).start ?? null;
 
         const amoutOfBreakTime = recordsModel.filter(e => e.type == ERecordType.BREAK).reduce((a, b) => a + b.duration(), 0);
-        
+
         const remaingMandatoryBreakTime = amoutOfBreakTime >= this.mandatoryBreakTime ? 0 : this.mandatoryBreakTime - amoutOfBreakTime;
 
-        const exceedAmoutOfBreakTime = amoutOfBreakTime >= this.mandatoryBreakTime ? Math.abs(this.mandatoryBreakTime - amoutOfBreakTime) : 0; 
+        const exceedAmoutOfBreakTime = amoutOfBreakTime >= this.mandatoryBreakTime ? Math.abs(this.mandatoryBreakTime - amoutOfBreakTime) : 0;
 
         const realFullWorkTime = Math.ceil(this.fullWorkTime * percentageOfWorkTimes);
 
         return {
-            time: clockInTime + realFullWorkTime + exceedAmoutOfBreakTime + this.mandatoryBreakTime,
-            breakTime: remaingMandatoryBreakTime,
+            time: clockInTime + realFullWorkTime + exceedAmoutOfBreakTime + this.mandatoryBreakTime, // in min
+            breakTime: remaingMandatoryBreakTime, // in min
         }
 
     }
+
+    getFlextimeForcast(flexTime, breakTime, timeUCanLeaveAt, dateTime) {
+        const dateTimeInMinutes = DateTimeUtils.convertTimeToMinutes(dateTime)
+        return flexTime + (dateTimeInMinutes - timeUCanLeaveAt + breakTime);
+    }
+
 }
 
 class AtossAPI {
@@ -131,7 +164,7 @@ class AtossAPI {
         const r = await Promise.all([this.getFlexTime(), this.getTimeRecords()]);
         if (r[0]) {
             return {
-                flextime: r[0],
+                flextime: DateTimeUtils.convertTimeToMinutes(r[0]),
                 records: r[1]
             };
         }
@@ -170,7 +203,7 @@ class AtossAPI {
                 var end = totimeAttr ? parseInt(totimeAttr) : null
                 if (end == 29952) {
                     end = null;
-                } 
+                }
                 const type = v.getElementsByClassName('input-search-wrapper')[0]?.getElementsByClassName("searcher")[0]?.value;
                 return {
                     start: start,
@@ -199,8 +232,8 @@ class AtossAPI {
                 return null;
             }
             const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-            const flexTime = Array.from(innerDoc.querySelectorAll(".data-list-body-cell-wrapper")).filter(e => e.innerHTML.includes("Flex"))[0]?.querySelectorAll(".caption")[1]?.innerHTML;
-            return flexTime;
+            const flexTime = Array.from(innerDoc.querySelectorAll(".data-list-body-cell-wrapper")).filter(e => e.innerHTML.includes("Flex"))[0]?.querySelectorAll(".caption")[1]?.textContent;
+            return flexTime.replace(/\u200B/g, ''); // Replace zero-width space between the - and the number if needed
         };
     }
 
@@ -234,6 +267,8 @@ const main = async () => {
     const howLong = new UCanLeaveAtModel()
 
     // Setup UI
+    const flextimeForcastTimeController = document.getElementById("flextime-forcast-time");
+    const flextimeForcastResultUI = document.getElementById("flextime-forcast-value");
     const updateBtn = document.getElementById("update")
     const resultUI = document.getElementById("result")
     const lastUpdateUI = document.getElementById("last-update")
@@ -243,29 +278,54 @@ const main = async () => {
     const resultBlock = document.getElementById("result-block");
     const haveToUpdateBlock = document.getElementById("have-to-update-block");
 
-    const updateUI = (lastUpdate,time, breakTime, flexTime) =>  {
+    const updateUI = (lastUpdate, time, breakTime, flexTime, flextimeForcastValue) => {
         if (lastUpdate) {
-            if(!DateTimeUtils.isToday(lastUpdate)) {
+            if (!DateTimeUtils.isToday(lastUpdate)) {
                 resultBlock.style.display = "none"
                 haveToUpdateBlock.style.display = "block"
             } else {
                 resultBlock.style.display = "block"
-                haveToUpdateBlock.style.display = "none" 
+                haveToUpdateBlock.style.display = "none"
             }
             lastUpdateUI.textContent = DateTimeUtils.formatByTimestamp(lastUpdate)
         }
-        if(flexTime) {
-            flextimeUI.textContent = flexTime.split(":").join("h") + "m";
+        if (flexTime) {
+            flextimeUI.textContent = DateTimeUtils.convertMinutesToTime(flexTime);
         }
         if (time) {
-            resultUI.innerHTML = `<strong>${DateTimeUtils.getMinsAsTime(time)}</strong>`
-            if(breakTime && breakTime > 0) {
+            resultUI.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(time)}</strong>`
+            if (breakTime && breakTime > 0) {
                 breakUI.innerHTML = `<span class="info"> ( including ${breakTime} minutes of break time )</span>`
             } else {
                 breakUI.innerHTML = ``
             }
         }
+        if (flextimeForcastValue) {
+            flextimeForcastResultUI.textContent = DateTimeUtils.convertMinutesToTime(flextimeForcastValue);
+            // flextimeForcastResultUI.style.display = "block"
+        }
     }
+
+    workRateUI.addEventListener("change", (event) => {
+        const value = event.target.value;
+        chrome.storage.local.set({ workRate: value })
+        chrome.storage.local.get(["records"]).then((result) => {
+            if (result.records) {
+                const records = result.records;
+                const { time, breakTime } = howLong.getTimeOfLeavingWork(records, parseInt(workRateUI.value))
+                updateUI(null, time, breakTime)
+                chrome.storage.local.set({ time: time, breakTime: breakTime })
+            }
+        });
+    })
+
+    flextimeForcastTimeController.addEventListener("change", (event) => {
+        const value = event.target.value;
+        chrome.storage.local.get(["time", "flexTime", "breakTime"]).then((result) => {
+            const flextimeForcast = howLong.getFlextimeForcast(result.flexTime, result.breakTime, result.time, value);
+            updateUI(null, null, null, null, flextimeForcast);
+        });
+    });
 
     // no keyboard
     workRateUI.addEventListener("keydown", e => e.preventDefault());
@@ -274,37 +334,47 @@ const main = async () => {
         const atossApi = new AtossAPI()
         const { flextime, records } = await atossApi.getData();
         if (records) {
-            const { time, breakTime } = howLong.getTimeOfLeavingWork(records,parseInt(workRateUI.value))
+            const { time, breakTime } = howLong.getTimeOfLeavingWork(records, parseInt(workRateUI.value))
             const lastUpdateTimestamp = new Date().getTime();
-            updateUI(lastUpdateTimestamp, time, breakTime,flextime)
-            chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time, flexTime: flextime,  breakTime:breakTime, records: records })
+            updateUI(lastUpdateTimestamp, time, breakTime, flextime)
+            chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time, flexTime: flextime, breakTime: breakTime, records: records })
         }
     })
 
     workRateUI.addEventListener("change", (event) => {
-        const value = event.target.value ;
-        chrome.storage.local.set({ workRate: value})
+        const value = event.target.value;
+        chrome.storage.local.set({ workRate: value })
         chrome.storage.local.get(["records"]).then((result) => {
-            if(result.records) {
+            if (result.records) {
                 const records = result.records;
-                const { time, breakTime } = howLong.getTimeOfLeavingWork(records,parseInt(workRateUI.value))
+                const { time, breakTime } = howLong.getTimeOfLeavingWork(records, parseInt(workRateUI.value))
                 updateUI(null, time, breakTime)
-                chrome.storage.local.set({ time:time, breakTime:breakTime })
+                chrome.storage.local.set({ time: time, breakTime: breakTime })
             }
         });
     })
 
     //Gathering Data
-    chrome.storage.local.get(["lastUpdate", "time", "flexTime", "workRate", "breakTime","records"]).then((result) => {
-        updateUI(result.lastUpdate, result.time, result.breakTime,result.flexTime)
-        if(result.time && result.breakTime) {
-            const { time, breakTime } = howLong.getTimeOfLeavingWork(records,parseInt(workRateUI.value))
+    chrome.storage.local.get(["lastUpdate", "time", "flexTime", "workRate", "breakTime", "records"]).then((result) => {
+        console.log("local storage")
+        console.log(result)
+        updateUI(result.lastUpdate, result.time, result.breakTime, result.flexTime)
+        if (result.time && result.breakTime != null) {
+            const { time, breakTime } = howLong.getTimeOfLeavingWork(result.records, parseInt(workRateUI.value))
             const lastUpdateTimestamp = new Date().getTime();
-            updateUI(lastUpdateTimestamp, time, breakTime)
-            chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time,  breakTime:breakTime })
+            updateUI(lastUpdateTimestamp, time, breakTime, result.flexTime)
+            chrome.storage.local.set({ lastUpdate: lastUpdateTimestamp, time: time, breakTime: breakTime })
+
+            const now = DateTimeUtils.convertDateToTime(new Date());
+            flextimeForcastTimeController.value = now;
+            const flextimeForcast = howLong.getFlextimeForcast(result.flexTime, result.breakTime, time, now);
+            updateUI(null, null, null, null, flextimeForcast);
         }
         workRateUI.value = result.workRate ?? 100;
+
     });
+
+
 }
 
 main()
