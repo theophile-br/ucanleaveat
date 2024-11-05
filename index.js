@@ -153,7 +153,7 @@ export class UCanLeaveAtModel {
 
     getFlextimeForcast(flexTime, breakTime, timeUCanLeaveAt, dateTime) {
         const dateTimeInMinutes = DateTimeUtils.convertTimeToMinutes(dateTime)
-        return flexTime + (dateTimeInMinutes - timeUCanLeaveAt + breakTime);
+        return flexTime + dateTimeInMinutes - timeUCanLeaveAt;
     }
 
 }
