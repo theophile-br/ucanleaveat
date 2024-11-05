@@ -5,7 +5,8 @@
 
 const ERecordType = {
     BREAK: "Break",
-    PRESENCE: "Presence"
+    PRESENCE: "Presence",
+    HOME_OFFICE: "Home Office hourly",
 }
 
 export class DateTimeUtils {
@@ -134,7 +135,7 @@ export class UCanLeaveAtModel {
     getTimeOfLeavingWork(records, percentageOfWorkTimes = 100) {
         const recordsModel = records.map(e => new AtossRecord(e.start, e.end, e.type))
         percentageOfWorkTimes /= 100;
-        const clockInTime = recordsModel.find(e => e.type == ERecordType.PRESENCE).start ?? null;
+        const clockInTime = recordsModel.find(e => e.type == ERecordType.PRESENCE || e.type == ERecordType.HOME_OFFICE).start ?? null;
 
         const amoutOfBreakTime = recordsModel.filter(e => e.type == ERecordType.BREAK).reduce((a, b) => a + b.duration(), 0);
 
