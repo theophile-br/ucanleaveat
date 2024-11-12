@@ -174,7 +174,7 @@ class AtossAPI {
 
     async getTimeRecords() {
         return new Promise((resolve, reject) => chrome.tabs.query({ active: true }, function (tabs) {
-            const tab = tabs.find((t) => t.url.includes("atoss.swiss.com"));
+            const tab = tabs.find((t) => t.url.includes("ases.swiss-as.com"));
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: searchTimeIntervalElements
@@ -218,7 +218,7 @@ class AtossAPI {
 
     async getFlexTime() {
         return new Promise((resolve, reject) => chrome.tabs.query({ active: true }, function (tabs) {
-            const tab = tabs.find((t) => t.url.includes("atoss.swiss.com"));
+            const tab = tabs.find((t) => t.url.includes("ases.swiss-as.com"));
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: searchFlexTime
@@ -240,7 +240,7 @@ class AtossAPI {
 
     async clickOnTimeRecordingManualy() {
         await new Promise((resolve, reject) => chrome.tabs.query({ active: true }, function (tabs) {
-            const tab = tabs.find((t) => t.url.includes("atoss.swiss.com"));
+            const tab = tabs.find((t) => t.url.includes("ases.swiss-as.com"));
             chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: getTimeRecordManualyButton
