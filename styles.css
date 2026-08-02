@@ -55,34 +55,98 @@
 }
 
 * {
-    font-family: Roboto;
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
 }
 
 body {
-    width: 400px;
+    width: 450px;
+    min-height: 220px;
     padding: 10px;
     color: aliceblue;
     letter-spacing: 0.35px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    text-align: center;
+}
+
+h1 {
+    color: aliceblue;
+    font-weight: 700;
+}
+
+.input-inline {
+    width: 110px;
+}
+
+.input-work-rate {
+    width: 75px;
+}
+
+.update-title {
+    font-size: 1.6rem;
 }
 
 .transparent {
-    transition: all 500ms ease;
-    border : solid 3px white;
+    transition: all 300ms ease;
+    border: solid 3px white;
     background-color: transparent;
     color: white;
     caret-color: transparent;
 }
 
 .transparent:focus {
-    border : solid 3px white;
+    border: solid 3px white;
     background-color: white;
     color: rgba(0, 0, 0, 0.5);
 }
 
 .transparent:hover {
-    border : solid 3px white;
+    border: solid 3px white;
     background-color: white;
-    color: rgba(0, 0, 0, 0.5);;
+    color: rgba(0, 0, 0, 0.5);
+    ;
+}
+
+.transparent:disabled,
+.transparent:disabled:hover,
+.transparent:disabled:focus {
+    border: solid 3px rgba(255, 255, 255, 0.35);
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.update-tip {
+    position: relative;
+    display: inline-block;
+}
+
+.update-tip:has(button:disabled):hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: small;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.update-tip:has(button:disabled):hover::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+    pointer-events: none;
 }
 
 .info {
@@ -98,21 +162,65 @@ body {
 }
 
 @-webkit-keyframes GrandientAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
 }
+
 @-moz-keyframes GrandientAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
 }
+
 @keyframes GrandientAnimation {
-    0%{background-position:0% 50%}
-    50%{background-position:100% 50%}
-    100%{background-position:0% 50%}
+    0% {
+        background-position: 0% 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0% 50%
+    }
 }
 
 input[type="time"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
+}
+
+#loading {
+    padding: 20px 0;
+}
+
+#error {
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 3px solid #ffb3b3;
+    text-align: left;
+}
+
+#error p {
+    color: #ffe0e0;
+    font-size: small;
 }

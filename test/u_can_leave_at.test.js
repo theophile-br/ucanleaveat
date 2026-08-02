@@ -1,4 +1,5 @@
-import { DateTimeUtils, UCanLeaveAtModel } from '../index.js';
+import { DateTimeUtils } from '../src/shared/date-time-utils.js';
+import { UCanLeaveAtModel } from '../src/models/u-can-leave-at-model.js';
 
 import { equal } from 'assert';
 
@@ -98,6 +99,29 @@ describe('HowLong', function () {
             const data = howLong.getTimeOfLeavingWork(records);
             equal(data.time, expectedTimeOfLeavingWork);
             equal(data.breakTime, 0);
+        })
+
+        it("Accepts German record labels (Anwesenheit / Pause)", () => {
+            DateTimeUtils.minutesNow = () => getMinutes(10, 20)
+            const records = [
+                { start: getMinutes(9, 0), end: getMinutes(10, 0), type: "Anwesenheit" },
+                { start: getMinutes(10, 0), end: null, type: "Pause" }
+            ]
+            const expected = getMinutes(9, 0) + getMinutes(8, 12) + getMinutes(0, 30);
+            const data = new UCanLeaveAtModel().getTimeOfLeavingWork(records);
+            equal(data.time, expected);
+            equal(data.breakTime, 10);
+        })
+
+        it("Treats Home Office variants as work", () => {
+            DateTimeUtils.minutesNow = () => getMinutes(10, 20)
+            const records = [
+                { start: getMinutes(9, 0), end: null, type: "Home Office hourly" }
+            ]
+            const expected = getMinutes(9, 0) + getMinutes(8, 12) + 30;
+            const data = new UCanLeaveAtModel().getTimeOfLeavingWork(records);
+            equal(data.time, expected);
+            equal(data.breakTime, 30);
         })
 
         it("When you have two Presence (with one on going) and one Break", () => {

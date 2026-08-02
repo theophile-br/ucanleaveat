@@ -11,7 +11,15 @@
 </head>
 
 <body class="gradient-anim rounded">
-    <div id="result-block">
+    <div id="loading" class="text-center" style="display:none">
+        <div class="spinner-border" role="status"></div>
+    </div>
+
+    <div id="error" style="display:none">
+        <p id="error-message" class="mb-0"></p>
+    </div>
+
+    <div id="result-block" style="display:none">
         <p class="info m-0">updated <span id="last-update"></span></p>
         <p class="mt-1"><strong>Flextime </strong> <span id="flextime"></span></p>
         <div class="row col-12 text-center">
@@ -19,23 +27,31 @@
             <h1 id="result" class="p-0 m-0"> - </h1>
             <p id="break"></p>
         </div>
-        <p class="mt-1">Flextime Forcast <strong><span id="flextime-forcast-value"></span></strong> if u leave at <input type="time" id="flextime-forcast-time" class="p-2 ml-2 rounded transparent" name="appt"/></p>
+        <p class="mt-1">Flextime Forecast <strong><span id="flextime-forcast-value"></span></strong>
+            if u leave at
+            <input type="time" id="flextime-forcast-time" class="p-2 rounded transparent input-inline" />
+        </p>
     </div>
-    <div id="have-to-update-block" class="row">
-        <h1 class="text-center">Please update your data</h1>
+
+    <div id="have-to-update-block" class="row" style="display:none">
+        <h1 class="text-center update-title">Please update your data</h1>
     </div>
-    <div class="row justify-content-between">
+
+    <div class="row justify-content-center align-items-center gap-3 mt-2">
         <div class="col-auto">
-            <button id="update" class="p-2 btn btn-primary transparent col-auto">Update</button>
+            <span class="update-tip" data-tip="Go to ATOSS, then click Update">
+                <button id="update" class="p-2 btn btn-primary transparent">Update</button>
+            </span>
         </div>
         <div class="col-auto">
-            <label class="form-label col-auto" for="work-rate">Work rate (%)</label>
-            <input type="number" id="work-rate" class="p-2 ml-2 rounded transparent col-auto" value="100" min="50" max="100"
-                step="10" />
+            <label class="form-label me-2 mb-0" for="work-rate">Work rate (%)</label>
+            <input type="number" id="work-rate" class="p-2 rounded transparent input-work-rate" value="100" min="50"
+                max="100" step="10" />
         </div>
     </div>
+
+    <script src="bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="src/ui/popup.js" type="module"></script>
 </body>
-<script src="index.js" type="module"></script>
-<script src="bootstrap/bootstrap.bundle.min.js"></script>
 
 </html>
