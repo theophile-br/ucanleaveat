@@ -2,7 +2,7 @@ import { UCanLeaveAtModel } from "../models/u-can-leave-at-model.js";
 import { DateTimeUtils } from "../shared/date-time-utils.js";
 import { ATOSS_HOST, STORAGE_KEYS } from "../shared/constants.js";
 import { loadState, saveComputed, saveWorkRate } from "./storage.js";
-import { scrapeAll } from "../content/scrape.js";
+import { clickTimeRecordingManually, waitForModalReady, scrapeAll } from "../content/scrape.js";
 import {
     updateUI,
     setLoading,
@@ -78,6 +78,12 @@ async function onUpdate() {
 
     setLoading(true);
     try {
+        const click = await runInTab(tabId, clickTimeRecordingManually);
+        if (!click?.ok) return setError(`Couldn't click on recording manually (${modal?.reason ?? "unknown"}).`);
+
+        const modal = await runInTab(tabId, waitForModalReady);
+        if (!modal?.ok) return setError(`Modal didn't show up (${modal?.reason ?? "unknown"}).`);
+
         const scrape = await runInTab(tabId, scrapeAll);
         if (!scrape?.ok) return setError(`Couldn't read your records (${scrape?.reason ?? "unknown"}).`);
 
