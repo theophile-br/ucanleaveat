@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Time Companion for ATOSS - Settings Screenshot</title>
+    <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        html, body.stage {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #1e1e2f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .popup-frame {
+            width: 450px;
+            min-height: 220px;
+            padding: 10px;
+            color: aliceblue;
+            letter-spacing: 0.35px;
+            box-sizing: border-box;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+            text-align: center;
+            position: relative;
+        }
+        .popup-frame.settings-open .settings-toggle {
+            transform: rotate(90deg);
+        }
+    </style>
+</head>
+
+<body class="stage">
+    <div class="popup-frame gradient-anim settings-open">
+        <button class="settings-toggle" aria-label="Close settings">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+            </svg>
+        </button>
+
+        <div class="view">
+            <h2 class="settings-title">Settings</h2>
+            <div class="settings-row">
+                <label class="form-label mb-0">Employment %</label>
+                <input type="number" class="p-2 rounded transparent input-work-rate" value="100" min="50" max="100" step="10" />
+            </div>
+            <div class="settings-row">
+                <label class="form-label mb-0">Daily hours</label>
+                <input type="time" class="p-2 rounded transparent input-inline" value="08:12" />
+            </div>
+            <div class="settings-row">
+                <label class="form-label mb-0">Mandatory break</label>
+                <input type="time" class="p-2 rounded transparent input-inline" value="00:30" />
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

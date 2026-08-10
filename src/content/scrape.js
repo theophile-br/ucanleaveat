@@ -4,7 +4,7 @@
 
 export function clickTimeRecordingManually(timeoutMs) {
     return new Promise((resolve) => {
-        const deadline = Date.now() + (timeoutMs || 10000);
+        const deadline = Date.now() + (timeoutMs || 2000);
         const findButton = () => {
             const iframe = document.getElementById("applicationIframe");
             if (!iframe) return null;
@@ -32,7 +32,7 @@ export function clickTimeRecordingManually(timeoutMs) {
 
 export function waitForModalReady(timeoutMs) {
     return new Promise((resolve) => {
-        const deadline = Date.now() + (timeoutMs || 15000);
+        const deadline = Date.now() + (timeoutMs || 2000);
         const collectDocs = () => {
             const out = [document];
             const walk = (doc) => {

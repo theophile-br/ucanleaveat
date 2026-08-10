@@ -49,6 +49,14 @@ export function setWorkRateValue(value) {
     $("work-rate").value = value;
 }
 
+export function setFullWorkTimeValue(minutes) {
+    $("full-work-time").value = DateTimeUtils.convertMinutesToTime(minutes);
+}
+
+export function setMandatoryBreakValue(minutes) {
+    $("mandatory-break").value = DateTimeUtils.convertMinutesToTime(minutes);
+}
+
 export function setForecastTime(value) {
     $("flextime-forcast-time").value = value;
 }

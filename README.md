@@ -6,6 +6,7 @@ Open ATOSS in your browser, click the extension icon, then click Update. The ext
 
 ## Screenshots
 <p align="center"><img src="docs/result.png" alt="Result state" width="300"></p>
+<p align="center"><img src="docs/settings.png" alt="Result state" width="300"></p>
 
 
 ## Features

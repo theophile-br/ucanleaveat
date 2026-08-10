@@ -1,4 +1,4 @@
-import { STORAGE_KEYS } from "../shared/constants.js";
+import { STORAGE_KEYS, DEFAULT_FULL_WORK_TIME_MINUTES, DEFAULT_MANDATORY_BREAK_MINUTES } from "../shared/constants.js";
 
 export async function loadState() {
     const all = await chrome.storage.local.get(Object.values(STORAGE_KEYS));
@@ -8,6 +8,8 @@ export async function loadState() {
         flexTime: all[STORAGE_KEYS.FLEX_TIME] ?? null,
         breakTime: all[STORAGE_KEYS.BREAK_TIME] ?? null,
         workRate: all[STORAGE_KEYS.WORK_RATE] ?? 100,
+        fullWorkTime: all[STORAGE_KEYS.FULL_WORK_TIME] ?? DEFAULT_FULL_WORK_TIME_MINUTES,
+        mandatoryBreak: all[STORAGE_KEYS.MANDATORY_BREAK] ?? DEFAULT_MANDATORY_BREAK_MINUTES,
         records: all[STORAGE_KEYS.RECORDS] ?? null,
     };
 }
@@ -21,4 +23,12 @@ export function saveComputed({ time, breakTime }) {
 
 export function saveWorkRate(workRate) {
     return chrome.storage.local.set({ [STORAGE_KEYS.WORK_RATE]: workRate });
+}
+
+export function saveFullWorkTime(fullWorkTime) {
+    return chrome.storage.local.set({ [STORAGE_KEYS.FULL_WORK_TIME]: fullWorkTime });
+}
+
+export function saveMandatoryBreak(mandatoryBreak) {
+    return chrome.storage.local.set({ [STORAGE_KEYS.MANDATORY_BREAK]: mandatoryBreak });
 }

@@ -68,6 +68,75 @@ body {
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
     text-align: center;
+    position: relative;
+}
+
+.view {
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+
+.view.fading {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.settings-toggle {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: aliceblue;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 200ms ease, transform 300ms ease;
+    z-index: 10;
+}
+
+.settings-toggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.settings-toggle .icon-close {
+    display: none;
+}
+
+body.settings-open .settings-toggle .icon-gear {
+    display: none;
+}
+
+body.settings-open .settings-toggle .icon-close {
+    display: block;
+}
+
+body.settings-open .settings-toggle {
+    transform: rotate(90deg);
+}
+
+.settings-title {
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 12px 0 20px;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 320px;
+    margin: 0 auto 14px;
+    padding: 0 8px;
+}
+
+.settings-row label {
+    margin-right: 16px;
 }
 
 h1 {

@@ -1,12 +1,12 @@
 import { AtossRecord } from "./atoss-record.js";
-import { isBreak, isWork } from "../shared/constants.js";
+import { isBreak, isWork, DEFAULT_FULL_WORK_TIME_MINUTES, DEFAULT_MANDATORY_BREAK_MINUTES } from "../shared/constants.js";
 import { DateTimeUtils } from "../shared/date-time-utils.js";
 
 export class UCanLeaveAtModel {
-    mandatoryBreakTime = 30;
-    fullWorkTime = 492;
+    mandatoryBreakTime = DEFAULT_MANDATORY_BREAK_MINUTES;
+    fullWorkTime = DEFAULT_FULL_WORK_TIME_MINUTES;
 
-    getTimeOfLeavingWork(records, percentageOfWorkTimes = 100) {
+    getTimeOfLeavingWork(records, percentageOfWorkTimes = 100, fullWorkTime = this.fullWorkTime, mandatoryBreakTime = this.mandatoryBreakTime) {
         const recordsModel = records.map(e => new AtossRecord(e.start, e.end, e.type));
         const rate = percentageOfWorkTimes / 100;
 
@@ -17,18 +17,18 @@ export class UCanLeaveAtModel {
             .filter(e => isBreak(e.type))
             .reduce((a, b) => a + b.duration(), 0);
 
-        const remainingMandatoryBreak = totalBreak >= this.mandatoryBreakTime
+        const remainingMandatoryBreak = totalBreak >= mandatoryBreakTime
             ? 0
-            : this.mandatoryBreakTime - totalBreak;
+            : mandatoryBreakTime - totalBreak;
 
-        const exceededBreak = totalBreak >= this.mandatoryBreakTime
-            ? Math.abs(this.mandatoryBreakTime - totalBreak)
+        const exceededBreak = totalBreak >= mandatoryBreakTime
+            ? Math.abs(mandatoryBreakTime - totalBreak)
             : 0;
 
-        const realFullWorkTime = Math.ceil(this.fullWorkTime * rate);
+        const realFullWorkTime = Math.ceil(fullWorkTime * rate);
 
         return {
-            time: clockInTime + realFullWorkTime + exceededBreak + this.mandatoryBreakTime,
+            time: clockInTime + realFullWorkTime + exceededBreak + mandatoryBreakTime,
             breakTime: remainingMandatoryBreak,
         };
     }

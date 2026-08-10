@@ -11,42 +11,71 @@
 </head>
 
 <body class="gradient-anim rounded">
-    <div id="loading" class="text-center" style="display:none">
-        <div class="spinner-border" role="status"></div>
-    </div>
+    <button id="settings-toggle" class="settings-toggle" aria-label="Settings">
+        <svg class="icon-gear" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"
+            fill="currentColor">
+            <path
+                d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0" />
+            <path
+                d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
+        </svg>
+        <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"
+            fill="currentColor">
+            <path
+                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+        </svg>
+    </button>
 
-    <div id="error" style="display:none">
-        <p id="error-message" class="mb-0"></p>
-    </div>
-
-    <div id="result-block" style="display:none">
-        <p class="info m-0">updated <span id="last-update"></span></p>
-        <p class="mt-1"><strong>Flextime </strong> <span id="flextime"></span></p>
-        <div class="row col-12 text-center">
-            <p class="p-0 m-0">U Can Leave At</p>
-            <h1 id="result" class="p-0 m-0"> - </h1>
-            <p id="break"></p>
+    <div id="main-view" class="view">
+        <div id="loading" class="text-center" style="display:none">
+            <div class="spinner-border" role="status"></div>
         </div>
-        <p class="mt-1">Flextime Forecast <strong><span id="flextime-forcast-value"></span></strong>
-            if u leave at
-            <input type="time" id="flextime-forcast-time" class="p-2 rounded transparent input-inline" />
-        </p>
-    </div>
 
-    <div id="have-to-update-block" class="row" style="display:none">
-        <h1 class="text-center update-title">Please update your data</h1>
-    </div>
-
-    <div class="row justify-content-center align-items-center gap-3 mt-2">
-        <div class="col-auto">
-            <span class="update-tip" data-tip="Go to ATOSS, then click Update">
-                <button id="update" class="p-2 btn btn-primary transparent">Update</button>
-            </span>
+        <div id="error" style="display:none">
+            <p id="error-message" class="mb-0"></p>
         </div>
-        <div class="col-auto">
-            <label class="form-label me-2 mb-0" for="work-rate">Work rate (%)</label>
+
+        <div id="result-block" style="display:none">
+            <p class="info m-0">updated <span id="last-update"></span></p>
+            <p class="mt-1"><strong>Flextime </strong> <span id="flextime"></span></p>
+            <div class="row col-12 text-center">
+                <p class="p-0 m-0">Estimated Leaving Time</p>
+                <h1 id="result" class="p-0 m-0"> - </h1>
+                <p id="break"></p>
+            </div>
+            <p class="mt-1">Flextime Forecast <strong><span id="flextime-forcast-value"></span></strong>
+                if you leave at
+                <input type="time" id="flextime-forcast-time" class="p-2 rounded transparent input-inline" />
+            </p>
+        </div>
+
+        <div id="have-to-update-block" class="row" style="display:none">
+            <h1 class="text-center update-title">Please update your data</h1>
+        </div>
+
+        <div class="row justify-content-center align-items-center gap-3 mt-2">
+            <div class="col-auto">
+                <span class="update-tip" data-tip="Go to ATOSS, then click Update">
+                    <button id="update" class="p-2 btn btn-primary transparent">Update</button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-view" class="view" style="display:none">
+        <h2 class="settings-title">Settings</h2>
+        <div class="settings-row">
+            <label class="form-label mb-0" for="work-rate">Employment %</label>
             <input type="number" id="work-rate" class="p-2 rounded transparent input-work-rate" value="100" min="50"
                 max="100" step="10" />
+        </div>
+        <div class="settings-row">
+            <label class="form-label mb-0" for="full-work-time">Daily hours</label>
+            <input type="time" id="full-work-time" class="p-2 rounded transparent input-inline" value="08:12" />
+        </div>
+        <div class="settings-row">
+            <label class="form-label mb-0" for="mandatory-break">Mandatory break</label>
+            <input type="time" id="mandatory-break" class="p-2 rounded transparent input-inline" value="00:30" />
         </div>
     </div>
 
