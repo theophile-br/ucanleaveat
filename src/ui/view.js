@@ -21,7 +21,7 @@ export function setOnAtoss(isOnAtoss) {
     $("update").disabled = !isOnAtoss;
 }
 
-export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast } = {}) {
+export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo } = {}) {
     if (lastUpdate != null) {
         const isToday = DateTimeUtils.isToday(lastUpdate);
         $("result-block").style.display = isToday ? "block" : "none";
@@ -42,6 +42,17 @@ export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForeca
 
     if (flextimeForecast != null) {
         $("flextime-forcast-value").textContent = DateTimeUtils.convertMinutesToTime(flextimeForecast);
+    }
+
+    if (timeToGo !== undefined) {
+        const el = $("time-to-go");
+        if (timeToGo === null) {
+            el.textContent = "";
+        } else if (timeToGo > 0) {
+            el.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(timeToGo)}</strong> <span class="info">to go</span>`;
+        } else {
+            el.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(Math.abs(timeToGo))}</strong> <span class="info">extra time</span>`;
+        }
     }
 }
 

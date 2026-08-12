@@ -81,6 +81,18 @@ body {
     pointer-events: none;
 }
 
+#result {
+    font-size:xx-large 
+}
+
+#time-to-go {
+    font-size: small
+}
+
+#time-to-go .info {
+    font-size: x-small;
+}
+
 .settings-toggle {
     position: fixed;
     top: 0px;

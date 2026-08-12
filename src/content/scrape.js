@@ -2,9 +2,8 @@
 // They MUST stay self-contained — no imports, no outer-scope references —
 // because only the function source is serialized into the target page.
 
-export function clickTimeRecordingManually(timeoutMs) {
+export function clickTimeRecordingManually() {
     return new Promise((resolve) => {
-        const deadline = Date.now() + (timeoutMs || 2000);
         const findButton = () => {
             const iframe = document.getElementById("applicationIframe");
             if (!iframe) return null;
@@ -14,19 +13,13 @@ export function clickTimeRecordingManually(timeoutMs) {
             return Array.from(doc.querySelectorAll(".action-item"))
                 .find(e => e.innerHTML.includes("glyphicon glyphicon-time")) || null;
         };
-        const tick = () => {
-            const btn = findButton();
-            if (btn) {
-                btn.click();
-                clearInterval(t);
-                resolve({ ok: true });
-            } else if (Date.now() > deadline) {
-                clearInterval(t);
-                resolve({ ok: false, reason: "button-not-found" });
-            }
-        };
-        const t = setInterval(tick, 200);
-        tick();
+        const btn = findButton();
+        if (btn) {
+            btn.click();
+            resolve({ ok: true });
+        } else {
+            resolve({ ok: false, reason: "button-not-found" });
+        }
     });
 }
 
@@ -110,4 +103,24 @@ export function scrapeAll() {
     });
 
     return { ok: true, flextime, records };
+}
+
+export function closeTimeRecordingManuallyModal() {
+    return new Promise((resolve) => {
+        const findAllButton = () => {
+            const iframe = document.getElementById("applicationIframe");
+            if (!iframe) return null;
+            let doc;
+            try { doc = iframe.contentDocument || iframe.contentWindow.document; } catch (_e) { return null; }
+            if (!doc) return null;
+                        return Array.from(doc.querySelectorAll(".btn-close")) || null;
+        };
+        const btns = findAllButton();
+        if (btns) {
+            btns.forEach((btn) => btn.click());
+            resolve({ ok: true });
+        } else {
+            resolve({ ok: false, reason: "button-not-found" });
+        }
+    });
 }

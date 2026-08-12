@@ -2,7 +2,7 @@ import { UCanLeaveAtModel } from "../models/u-can-leave-at-model.js";
 import { DateTimeUtils } from "../shared/date-time-utils.js";
 import { ATOSS_TITLE_MARKER, STORAGE_KEYS } from "../shared/constants.js";
 import { loadState, saveComputed, saveWorkRate, saveFullWorkTime, saveMandatoryBreak } from "./storage.js";
-import { clickTimeRecordingManually, waitForModalReady, scrapeAll } from "../content/scrape.js";
+import { clickTimeRecordingManually, waitForModalReady, scrapeAll, closeTimeRecordingManuallyModal } from "../content/scrape.js";
 import {
     updateUI,
     setLoading,
@@ -17,6 +17,24 @@ import {
 
 const model = new UCanLeaveAtModel();
 const $ = (id) => document.getElementById(id);
+
+let currentLeavingTime = null;
+let tickerId = null;
+
+function tick() {
+    if (currentLeavingTime == null) return;
+    const now = DateTimeUtils.convertDateToTime(new Date());
+    const timeToGo = currentLeavingTime - DateTimeUtils.convertTimeToMinutes(now);
+    updateUI({ timeToGo });
+}
+
+function trackLeavingTime(time) {
+    currentLeavingTime = time;
+    tick();
+    if (tickerId == null) {
+        tickerId = setInterval(tick, 30_000);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", init);
 
@@ -93,6 +111,7 @@ function render(records, flexTime, lastUpdate) {
     const forecast = model.getFlextimeForcast(flexTime, breakTime, time, now);
 
     updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast: forecast });
+    trackLeavingTime(time);
     return { time, breakTime };
 }
 
@@ -115,6 +134,10 @@ async function onUpdate() {
 
         const scrape = await runInTab(tabId, scrapeAll);
         if (!scrape?.ok) return setError(`Couldn't read your records (${scrape?.reason ?? "unknown"}).`);
+
+        const close = await runInTab(tabId, closeTimeRecordingManuallyModal);
+        if (!close?.ok) return setError(`Couldn't close time recording manually modal (${scrape?.reason ?? "unknown"}).`);
+        
 
         const flexTime = DateTimeUtils.convertTimeToMinutes(scrape.flextime);
         const fetchedAt = Date.now();
@@ -139,6 +162,7 @@ async function onWorkRateChange(event) {
     const { time, breakTime } = model.getTimeOfLeavingWork(state.records, parseInt(event.target.value), currentFullWorkTime(), currentMandatoryBreak());
     await saveComputed({ time, breakTime });
     updateUI({ time, breakTime });
+    trackLeavingTime(time);
 }
 
 async function onFullWorkTimeChange(event) {
@@ -149,6 +173,7 @@ async function onFullWorkTimeChange(event) {
     const { time, breakTime } = model.getTimeOfLeavingWork(state.records, state.workRate, minutes, currentMandatoryBreak());
     await saveComputed({ time, breakTime });
     updateUI({ time, breakTime });
+    trackLeavingTime(time);
 }
 
 async function onMandatoryBreakChange(event) {
@@ -159,6 +184,7 @@ async function onMandatoryBreakChange(event) {
     const { time, breakTime } = model.getTimeOfLeavingWork(state.records, state.workRate, currentFullWorkTime(), minutes);
     await saveComputed({ time, breakTime });
     updateUI({ time, breakTime });
+    trackLeavingTime(time);
 }
 
 async function onForecastChange(event) {
