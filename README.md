@@ -1,13 +1,14 @@
-# U Can Leave At
+# Work Time Companion for ATOSS
 
 A Chrome extension that reads your ATOSS time-recording data and tells you when you can leave.
 
 Open ATOSS in your browser, click the extension icon, then click Update. The extension opens the time-recording panel on your current ATOSS tab and reads your records.
 
+Download [here](https://chromewebstore.google.com/detail/work-time-companion-for-a/odmbdkfckgnoeelkijabpdccamnfadeb)
+
 ## Screenshots
 <p align="center"><img src="docs/result.jpg" alt="Result state" width="300"></p>
 <p align="center"><img src="docs/settings.jpg" alt="Result state" width="300"></p>
-
 
 ## Features
 
