@@ -21,7 +21,7 @@ export function setOnAtoss(isOnAtoss) {
     $("update").disabled = !isOnAtoss;
 }
 
-export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo } = {}) {
+export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo, weekMinutes, todayMinutes } = {}) {
     if (lastUpdate != null) {
         const isToday = DateTimeUtils.isToday(lastUpdate);
         $("result-block").style.display = isToday ? "block" : "none";
@@ -34,24 +34,41 @@ export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForeca
     }
 
     if (time != null) {
-        $("result").innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(time)}</strong>`;
-        $("break").innerHTML = breakTime > 0
-            ? `<span class="info"> ( including ${breakTime} minutes of break time )</span>`
-            : "";
+        $("result").textContent = DateTimeUtils.convertMinutesToTime(time);
+        $("break").textContent = breakTime > 0 ? `including ${breakTime} min break` : "";
     }
 
     if (flextimeForecast != null) {
         $("flextime-forcast-value").textContent = DateTimeUtils.convertMinutesToTime(flextimeForecast);
     }
 
+    if (todayMinutes !== undefined) {
+        const wrap = $("today-metric");
+        if (todayMinutes == null) {
+            wrap.style.display = "none";
+        } else {
+            wrap.style.display = "";
+            $("today-worked").textContent = DateTimeUtils.convertMinutesToTime(todayMinutes);
+        }
+    }
+
+    if (weekMinutes !== undefined) {
+        const wrap = $("week-metric");
+        if (weekMinutes == null) {
+            wrap.style.display = "none";
+        } else {
+            wrap.style.display = "";
+            $("week-progress").textContent = DateTimeUtils.convertMinutesToTime(weekMinutes);
+        }
+    }
+
     if (timeToGo !== undefined) {
         const el = $("time-to-go");
-        if (timeToGo === null) {
-            el.textContent = "";
-        } else if (timeToGo > 0) {
-            el.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(timeToGo)}</strong> <span class="info">to go</span>`;
+        if (timeToGo == null) {
+            el.style.display = "none";
         } else {
-            el.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(Math.abs(timeToGo))}</strong> <span class="info">extra time</span>`;
+            el.style.display = "inline-block";
+            el.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(timeToGo.minutes)}</strong> <span class="info">${timeToGo.label}</span>`;
         }
     }
 }
@@ -68,6 +85,26 @@ export function setMandatoryBreakValue(minutes) {
     $("mandatory-break").value = DateTimeUtils.convertMinutesToTime(minutes);
 }
 
-export function setForecastTime(value) {
-    $("flextime-forcast-time").value = value;
+export function setTheme(theme) {
+    for (const cls of Array.from(document.body.classList)) {
+        if (cls.startsWith("theme-")) document.body.classList.remove(cls);
+    }
+    document.body.classList.add(`theme-${theme}`);
+}
+
+export function setActiveSwatch(theme) {
+    document.querySelectorAll(".swatch").forEach(el => {
+        el.classList.toggle("is-selected", el.dataset.theme === theme);
+    });
+}
+
+export function setEmploymentPreview(minutes) {
+    const el = $("work-rate-preview");
+    if (minutes == null) {
+        el.style.display = "none";
+        el.textContent = "";
+    } else {
+        el.style.display = "";
+        el.textContent = `${DateTimeUtils.convertMinutesToTime(minutes)} per day`;
+    }
 }

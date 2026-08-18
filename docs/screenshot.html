@@ -34,6 +34,10 @@
             text-align: center;
             position: relative;
         }
+
+        .popup-frame .settings-toggle {
+            position: absolute;
+        }
     </style>
 </head>
 
@@ -50,21 +54,35 @@
         </button>
 
         <div class="view">
-            <p class="info m-0">updated 24 Dec 2026, 14:32</p>
-            <p class="mt-1"><strong>Flextime </strong> <span>+04:15</span></p>
-            <div class="row col-12 text-center">
-                <p class="p-0 m-0">Estimated Leaving Time</p>
-                <h1 class="p-0 m-0">17:42</h1>
-                <p>break 00:45</p>
+            <p class="updated-line">updated Thursday 24 December at 14:32</p>
+
+            <p class="hero-label">Estimated Leaving Time</p>
+            <h1 class="hero-time">17:42</h1>
+            <span class="to-go-pill"><strong>02:40</strong> <span class="info">to go</span></span>
+            <p class="break-sub">including 30 min break</p>
+
+            <div class="metric-row">
+                <div class="glass metric">
+                    <span class="metric-label">Flextime</span>
+                    <span class="metric-value">+04:15</span>
+                </div>
+                <div class="glass metric">
+                    <span class="metric-label">Today</span>
+                    <span class="metric-value">05:32</span>
+                </div>
+                <div class="glass metric">
+                    <span class="metric-label">Week</span>
+                    <span class="metric-value">37:58</span>
+                </div>
             </div>
-            <p class="mt-1">Flextime Forecast <strong><span>+04:33</span></strong>
-                if you leave at
-                <input type="time" value="18:00" class="p-2 rounded transparent input-inline" />
+
+            <p class="forecast-line">
+                Flextime if leaving now <strong>+01:35</strong>
             </p>
 
             <div class="row justify-content-center align-items-center gap-3 mt-2">
                 <div class="col-auto">
-                    <button class="p-2 btn btn-primary transparent">Update</button>
+                    <button class="btn transparent">Update</button>
                 </div>
             </div>
         </div>

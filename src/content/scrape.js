@@ -105,6 +105,117 @@ export function scrapeAll() {
     return { ok: true, flextime, records };
 }
 
+export function clickGraphicalOverview() {
+    return new Promise((resolve) => {
+        const findButton = () => {
+            const iframe = document.getElementById("applicationIframe");
+            if (!iframe) return null;
+            let doc;
+            try { doc = iframe.contentDocument || iframe.contentWindow.document; } catch (_e) { return null; }
+            if (!doc) return null;
+            return Array.from(doc.querySelectorAll(".action-item"))
+                .find(e => e.innerHTML.includes("glyphicon glyphicon-combo-chart")) || null;
+        };
+        const btn = findButton();
+        if (btn) {
+            btn.click();
+            resolve({ ok: true });
+        } else {
+            resolve({ ok: false, reason: "button-not-found" });
+        }
+    });
+}
+
+export function waitForGraphicalOverviewReady(timeoutMs) {
+    return new Promise((resolve) => {
+        const deadline = Date.now() + (timeoutMs || 2000);
+        const collectDocs = () => {
+            const out = [document];
+            const walk = (doc) => {
+                const iframes = doc.getElementsByTagName("iframe");
+                for (let i = 0; i < iframes.length; i++) {
+                    try {
+                        const inner = iframes[i].contentDocument || iframes[i].contentWindow.document;
+                        if (inner && !out.includes(inner)) { out.push(inner); walk(inner); }
+                    } catch (_e) { /* cross-origin */ }
+                }
+            };
+            walk(document);
+            return out;
+        };
+        const check = () => collectDocs().some(d => d.querySelector(".bog-day-wrapper.today") != null);
+
+        if (check()) return resolve({ ok: true });
+
+        let observer, intervalId;
+        const done = (ok, reason) => {
+            if (observer) observer.disconnect();
+            if (intervalId) clearInterval(intervalId);
+            resolve(ok ? { ok: true } : { ok: false, reason });
+        };
+        observer = new MutationObserver(() => {
+            if (check()) done(true);
+            else if (Date.now() > deadline) done(false, "timeout");
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        intervalId = setInterval(() => {
+            if (check()) done(true);
+            else if (Date.now() > deadline) done(false, "timeout");
+        }, 200);
+    });
+}
+
+export function scrapeWeekPastMinutes() {
+    const docs = [document];
+    const walk = (d) => {
+        const iframes = d.getElementsByTagName("iframe");
+        for (let i = 0; i < iframes.length; i++) {
+            try {
+                const inner = iframes[i].contentDocument || iframes[i].contentWindow.document;
+                if (inner && !docs.includes(inner)) { docs.push(inner); walk(inner); }
+            } catch (_e) { /* cross-origin */ }
+        }
+    };
+    walk(document);
+
+    let days = null;
+    for (const d of docs) {
+        const found = d.querySelectorAll('.bog-day-wrapper[id*="day-wrapper_"]');
+        if (found.length > 0) { days = found; break; }
+    }
+    if (!days || days.length === 0) return { ok: false, reason: "no-days" };
+
+    let pastMinutes = 0;
+    let sawToday = false;
+    for (const day of days) {
+        if (day.classList.contains("today")) { sawToday = true; break; }
+        if (day.classList.contains("weekend")) continue;
+        for (const b of day.querySelectorAll(".bog-block[data-entry-time]")) {
+            pastMinutes += parseInt(b.getAttribute("data-entry-time"), 10) || 0;
+        }
+    }
+    if (!sawToday) return { ok: false, reason: "no-today" };
+
+    return { ok: true, pastMinutes };
+}
+
+export function closeGraphicalOverview() {
+    return new Promise((resolve) => {
+        const iframe = document.getElementById("applicationIframe");
+        if (!iframe) return resolve({ ok: false, reason: "no-iframe" });
+        let doc;
+        try { doc = iframe.contentDocument || iframe.contentWindow.document; } catch (_e) { return resolve({ ok: false, reason: "no-doc" }); }
+        if (!doc) return resolve({ ok: false, reason: "no-doc" });
+        const icon = doc.querySelector('a .icon-logo') || doc.querySelector('.icon-logo');
+        if (icon) {
+            (icon.closest('a') || icon).click();
+            resolve({ ok: true });
+        } else {
+            resolve({ ok: false, reason: "icon-not-found" });
+        }
+    });
+}
+
 export function closeTimeRecordingManuallyModal() {
     return new Promise((resolve) => {
         const findAllButton = () => {

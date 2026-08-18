@@ -1,155 +1,85 @@
 import { DateTimeUtils } from '../src/shared/date-time-utils.js';
-import { UCanLeaveAtModel } from '../src/models/u-can-leave-at-model.js';
+import { UCanLeaveAtModel, OvernightWorkError } from '../src/models/u-can-leave-at-model.js';
 
-import { equal } from 'assert';
+import { equal, deepEqual, throws } from 'assert';
 
-const getMinutes = (hours, minutes) => {
-    return hours * 60 + minutes;
-}
+const getMinutes = (hours, minutes) => hours * 60 + minutes;
+const setNow = (hours, minutes) => { DateTimeUtils.minutesNow = () => getMinutes(hours, minutes); };
 
-describe('HowLong', function () {
-    describe("getTimeOfLeavingWork()", () => {
-        it("When you have one Presence record ", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(10, 20)
+const model = new UCanLeaveAtModel();
+
+describe('UCanLeaveAtModel', () => {
+    describe('compute()', () => {
+        it('returns all fields on the happy path', () => {
+            setNow(13, 0);
             const records = [
-                {
-                    "start": getMinutes(9, 0),
-                    "end": null,
-                    "type": "Presence"
-                }
-            ]
+                { start: getMinutes(9, 0), end: getMinutes(12, 0), type: 'Presence' },
+                { start: getMinutes(12, 0), end: getMinutes(12, 30), type: 'Break' },
+                { start: getMinutes(12, 30), end: null, type: 'Presence' },
+            ];
 
-            const expectedTimeOfLeavingWork = getMinutes(9, 0) + getMinutes(8, 12) + 30;
+            const result = model.compute({ records, flexTime: 60, weekPastMinutes: 1000 });
 
-            const howLong = new UCanLeaveAtModel();
-            const data = howLong.getTimeOfLeavingWork(records);
-            equal(data.time, expectedTimeOfLeavingWork);
-            equal(data.breakTime, 30);
-        })
+            equal(result.leavingTime, getMinutes(9, 0) + 492 + 30);
+            equal(result.breakTime, 0);
+            equal(result.todayMinutes, getMinutes(3, 30));
+            equal(result.timeToGo, 492 - getMinutes(3, 30));
+            equal(result.weekMinutes, 1000 + getMinutes(3, 30));
+            equal(result.flextimeForecast, 60 + getMinutes(3, 30) - 492);
+        });
 
-        it("When you have one Presence and one Break on going less than 30 min", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(10, 20)
+        it('weekMinutes falls back to todayMinutes when weekPastMinutes is null', () => {
+            setNow(11, 0);
+            const records = [{ start: getMinutes(9, 0), end: null, type: 'Presence' }];
+
+            const result = model.compute({ records, flexTime: 0, weekPastMinutes: null });
+
+            equal(result.weekMinutes, getMinutes(2, 0));
+        });
+
+        it('flextimeForecast is null when flexTime is null', () => {
+            setNow(11, 0);
+            const records = [{ start: getMinutes(9, 0), end: null, type: 'Presence' }];
+
+            const result = model.compute({ records, flexTime: null, weekPastMinutes: 0 });
+
+            equal(result.flextimeForecast, null);
+        });
+
+        it('throws OvernightWorkError when a record crosses midnight', () => {
+            setNow(1, 0);
             const records = [
-                {
-                    "start": getMinutes(9, 0),
-                    "end": getMinutes(10, 0),
-                    "type": "Presence"
-                },
-                {
-                    "start": getMinutes(10, 0),
-                    "end": null,
-                    "type": "Break"
-                }
-            ]
+                { start: getMinutes(23, 0), end: getMinutes(1, 0), type: 'Presence' },
+            ];
 
-            const expectedTimeOfLeavingWork = getMinutes(9, 0) + getMinutes(8, 12) + getMinutes(0, 30);
+            throws(() => model.compute({ records }), OvernightWorkError);
+        });
 
-            const howLong = new UCanLeaveAtModel();
-            const data = howLong.getTimeOfLeavingWork(records);
-            equal(data.time, expectedTimeOfLeavingWork);
-            equal(data.breakTime, 10);
-        })
-
-        it("When you have one Presence and one Break on going more than 30 min", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(10, 50)
+        it('throws OvernightWorkError when computed leaving time crosses midnight', () => {
+            setNow(23, 30);
             const records = [
-                {
-                    "start": getMinutes(9, 0),
-                    "end": getMinutes(10, 0),
-                    "type": "Presence"
-                },
-                {
-                    "start": getMinutes(10, 0),
-                    "end": null,
-                    "type": "Break"
-                }
-            ]
+                { start: getMinutes(23, 0), end: null, type: 'Presence' },
+            ];
 
-            const expectedTimeOfLeavingWork = getMinutes(9, 0) + getMinutes(8, 12) + 50;
+            throws(() => model.compute({ records }), OvernightWorkError);
+        });
+    });
 
-            const howLong = new UCanLeaveAtModel();
-            const data = howLong.getTimeOfLeavingWork(records);
-            equal(data.time, expectedTimeOfLeavingWork);
-            equal(data.breakTime, 0);
-        })
+    describe('formatTimeToGo()', () => {
+        it('returns null when timeToGo is 0', () => {
+            equal(model.formatTimeToGo(0), null);
+        });
 
-        it("When you have two Presence and one Break", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(16, 0)
-            const records = [
-                {
-                    "start": getMinutes(9, 15),
-                    "end": getMinutes(12, 19),
-                    "type": "Presence"
-                },
-                {
-                    "start": getMinutes(12, 19),
-                    "end": getMinutes(13, 45),
-                    "type": "Break"
-                },
-                {
-                    "start": getMinutes(13, 45),
-                    "end": getMinutes(19, 20),
-                    "type": "Presence"
-                }
-            ]
+        it('returns null when timeToGo is null', () => {
+            equal(model.formatTimeToGo(null), null);
+        });
 
-            const expectedTimeOfLeavingWork = getMinutes(18, 53);
+        it("returns 'to go' with positive minutes when timeToGo is positive", () => {
+            deepEqual(model.formatTimeToGo(45), { label: 'to go', minutes: 45 });
+        });
 
-            const howLong = new UCanLeaveAtModel();
-            const data = howLong.getTimeOfLeavingWork(records);
-            equal(data.time, expectedTimeOfLeavingWork);
-            equal(data.breakTime, 0);
-        })
-
-        it("Accepts German record labels (Anwesenheit / Pause)", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(10, 20)
-            const records = [
-                { start: getMinutes(9, 0), end: getMinutes(10, 0), type: "Anwesenheit" },
-                { start: getMinutes(10, 0), end: null, type: "Pause" }
-            ]
-            const expected = getMinutes(9, 0) + getMinutes(8, 12) + getMinutes(0, 30);
-            const data = new UCanLeaveAtModel().getTimeOfLeavingWork(records);
-            equal(data.time, expected);
-            equal(data.breakTime, 10);
-        })
-
-        it("Treats Home Office variants as work", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(10, 20)
-            const records = [
-                { start: getMinutes(9, 0), end: null, type: "Home Office hourly" }
-            ]
-            const expected = getMinutes(9, 0) + getMinutes(8, 12) + 30;
-            const data = new UCanLeaveAtModel().getTimeOfLeavingWork(records);
-            equal(data.time, expected);
-            equal(data.breakTime, 30);
-        })
-
-        it("When you have two Presence (with one on going) and one Break", () => {
-            DateTimeUtils.minutesNow = () => getMinutes(17, 12)
-            const records = [
-                {
-                    "start": getMinutes(9, 12),
-                    "end": getMinutes(11, 57),
-                    "type": "Presence"
-                },
-                {
-                    "start": getMinutes(11, 57),
-                    "end": getMinutes(12, 26),
-                    "type": "Break"
-                },
-                {
-                    "start": getMinutes(12, 26),
-                    "end": null,
-                    "type": "Presence"
-                }
-            ]
-
-            const expectedTimeOfLeavingWork = getMinutes(17, 54);
-
-            const howLong = new UCanLeaveAtModel();
-            const data = howLong.getTimeOfLeavingWork(records);
-            equal(data.time, expectedTimeOfLeavingWork);
-            equal(data.breakTime, 1);
-        })        
-    })
+        it("returns 'extra time' with absolute minutes when timeToGo is negative", () => {
+            deepEqual(model.formatTimeToGo(-45), { label: 'extra time', minutes: 45 });
+        });
+    });
 });

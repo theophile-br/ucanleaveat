@@ -10,7 +10,7 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 
-<body class="gradient-anim rounded">
+<body class="gradient-anim rounded theme-blue-purple">
     <button id="settings-toggle" class="settings-toggle" aria-label="Settings">
         <svg class="icon-gear" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"
             fill="currentColor">
@@ -36,17 +36,30 @@
         </div>
 
         <div id="result-block" style="display:none">
-            <p class="info m-0">updated <span id="last-update"></span></p>
-            <p class="mt-1"><strong>Flextime </strong> <span id="flextime"></span></p>
-            <div class="row col-12 text-center">
-                <p class="p-0 m-0">Estimated Leaving Time</p>
-                <h1 id="result" class="p-0 m-0"> - </h1>
-                <p id="time-to-go" class="p-0 m-0"></p>
-                <p id="break"></p>
+            <p class="updated-line">updated <span id="last-update"></span></p>
+
+            <p class="hero-label">Estimated Leaving Time</p>
+            <h1 id="result" class="hero-time"> - </h1>
+            <span id="time-to-go" class="to-go-pill" style="display:none"></span>
+            <p id="break" class="break-sub"></p>
+
+            <div class="metric-row">
+                <div class="glass metric">
+                    <span class="metric-label">Flextime</span>
+                    <span id="flextime" class="metric-value"></span>
+                </div>
+                <div id="today-metric" class="glass metric" style="display:none">
+                    <span class="metric-label">Today</span>
+                    <span id="today-worked" class="metric-value"></span>
+                </div>
+                <div id="week-metric" class="glass metric" style="display:none">
+                    <span class="metric-label">Week</span>
+                    <span id="week-progress" class="metric-value"></span>
+                </div>
             </div>
-            <p class="mt-1">Flextime Forecast <strong><span id="flextime-forcast-value"></span></strong>
-                if you leave at
-                <input type="time" id="flextime-forcast-time" class="p-2 rounded transparent input-inline" />
+
+            <p class="forecast-line">
+                Flextime if leaving now <strong><span id="flextime-forcast-value"></span></strong>
             </p>
         </div>
 
@@ -57,26 +70,46 @@
         <div class="row justify-content-center align-items-center gap-3 mt-2">
             <div class="col-auto">
                 <span class="update-tip" data-tip="Go to ATOSS, then click Update">
-                    <button id="update" class="p-2 btn btn-primary transparent">Update</button>
+                    <button id="update" class="btn transparent">Update</button>
                 </span>
             </div>
         </div>
     </div>
 
     <div id="settings-view" class="view" style="display:none">
-        <h2 class="settings-title">Settings</h2>
-        <div class="settings-row">
-            <label class="form-label mb-0" for="work-rate">Employment %</label>
-            <input type="number" id="work-rate" class="p-2 rounded transparent input-work-rate" value="100" min="50"
+        <p class="settings-title">Settings</p>
+        <div class="glass setting-card">
+            <div class="label-block">
+                <label class="setting-name" for="work-rate">Employment</label>
+                <span id="work-rate-preview" class="setting-preview"></span>
+            </div>
+            <input type="number" id="work-rate" class="transparent input-work-rate" value="100" min="50"
                 max="100" step="10" />
         </div>
-        <div class="settings-row">
-            <label class="form-label mb-0" for="full-work-time">Daily hours</label>
-            <input type="time" id="full-work-time" class="p-2 rounded transparent input-inline" value="08:12" />
+        <div class="glass setting-card">
+            <div class="label-block">
+                <label class="setting-name" for="full-work-time">Daily hours</label>
+            </div>
+            <input type="time" id="full-work-time" class="transparent input-inline" value="08:12" />
         </div>
-        <div class="settings-row">
-            <label class="form-label mb-0" for="mandatory-break">Mandatory break</label>
-            <input type="time" id="mandatory-break" class="p-2 rounded transparent input-inline" value="00:30" />
+        <div class="glass setting-card">
+            <div class="label-block">
+                <label class="setting-name" for="mandatory-break">Mandatory break</label>
+            </div>
+            <input type="time" id="mandatory-break" class="transparent input-inline" value="00:30" />
+        </div>
+        <div class="glass setting-card setting-card--theme">
+            <div class="label-block">
+                <label class="setting-name">Theme</label>
+            </div>
+            <div class="swatch-grid" role="radiogroup" aria-label="Theme">
+                <button class="swatch swatch--blue-purple" data-theme="blue-purple" aria-label="Blue purple"></button>
+                <button class="swatch swatch--dark" data-theme="dark" aria-label="Dark"></button>
+                <button class="swatch swatch--pinky-winky" data-theme="pinky-winky" aria-label="Pinky Winky"></button>
+                <button class="swatch swatch--orange" data-theme="orange" aria-label="Orange"></button>
+                <button class="swatch swatch--sunrise" data-theme="sunrise" aria-label="Sunrise"></button>
+                <button class="swatch swatch--green" data-theme="green" aria-label="Green"></button>
+            </div>
         </div>
     </div>
 
