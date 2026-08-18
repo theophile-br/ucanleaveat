@@ -5,8 +5,8 @@ A Chrome extension that reads your ATOSS time-recording data and tells you when 
 Open ATOSS in your browser, click the extension icon, then click Update. The extension opens the time-recording panel on your current ATOSS tab and reads your records.
 
 ## Screenshots
-<p align="center"><img src="docs/result.png" alt="Result state" width="300"></p>
-<p align="center"><img src="docs/settings.png" alt="Result state" width="300"></p>
+<p align="center"><img src="docs/result.jpg" alt="Result state" width="300"></p>
+<p align="center"><img src="docs/settings.jpg" alt="Result state" width="300"></p>
 
 
 ## Features
