@@ -10,7 +10,7 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 
-<body class="gradient-anim rounded theme-blue-purple">
+<body class="gradient-anim rounded theme-dark">
     <button id="settings-toggle" class="settings-toggle" aria-label="Settings">
         <svg class="icon-gear" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"
             fill="currentColor">
@@ -36,43 +36,46 @@
         </div>
 
         <div id="result-block" style="display:none">
-            <p class="updated-line">updated <span id="last-update"></span></p>
+            <p class="r1-updated">updated <span id="last-update"></span></p>
 
-            <p class="hero-label">Estimated Leaving Time</p>
-            <h1 id="result" class="hero-time"> - </h1>
-            <span id="time-to-go" class="to-go-pill" style="display:none"></span>
-            <p id="break" class="break-sub"></p>
+            <p class="r2-hero">
+                <span class="hero-lead">Estimated leaving time</span>
+                <span id="result" class="hero-time"> - </span>
+                <span id="break" class="break-note"></span>
+            </p>
 
-            <div class="metric-row">
-                <div class="glass metric">
-                    <span class="metric-label">Flextime</span>
-                    <span id="flextime" class="metric-value"></span>
+            <div class="r3-chips">
+                <div id="time-to-go-chip" class="chip" data-toggle="tooltip" data-placement="bottom" title="Difference from your daily target" style="display:none">
+                    <span class="chip-label">To go</span>
+                    <span id="time-to-go" class="chip-value"></span>
                 </div>
-                <div id="today-metric" class="glass metric" style="display:none">
-                    <span class="metric-label">Today</span>
-                    <span id="today-worked" class="metric-value"></span>
+                <div id="today-metric" class="chip" data-toggle="tooltip" data-placement="bottom" title="Time worked so far today" style="display:none">
+                    <span class="chip-label">Today</span>
+                    <span id="today-worked" class="chip-value"></span>
                 </div>
-                <div id="week-metric" class="glass metric" style="display:none">
-                    <span class="metric-label">Week</span>
-                    <span id="week-progress" class="metric-value"></span>
+                <div id="week-metric" class="chip" data-toggle="tooltip" data-placement="bottom" title="Total time worked since Monday" style="display:none">
+                    <span class="chip-label">Week</span>
+                    <span id="week-progress" class="chip-value"></span>
+                </div>
+                <div id="flex-chip" class="chip" data-toggle="tooltip" data-placement="bottom" title="Your current flextime balance">
+                    <span class="chip-label">Flex</span>
+                    <span id="flextime" class="chip-value"></span>
+                </div>
+                <div id="forecast-chip" class="chip" data-toggle="tooltip" data-placement="bottom" title="Flextime balance if you clock out now">
+                    <span class="chip-label">Flex forcasted</span>
+                    <span id="flextime-forcast-value" class="chip-value"></span>
                 </div>
             </div>
-
-            <p class="forecast-line">
-                Flextime if leaving now <strong><span id="flextime-forcast-value"></span></strong>
-            </p>
         </div>
 
         <div id="have-to-update-block" class="row" style="display:none">
             <h1 class="text-center update-title">Please update your data</h1>
         </div>
 
-        <div class="row justify-content-center align-items-center gap-3 mt-2">
-            <div class="col-auto">
-                <span class="update-tip" data-tip="Go to ATOSS, then click Update">
-                    <button id="update" class="btn transparent">Update</button>
-                </span>
-            </div>
+        <div class="r4-action">
+            <span class="update-tip" data-tip="Go to ATOSS, then click Update">
+                <button id="update" class="btn transparent">Update</button>
+            </span>
         </div>
     </div>
 
@@ -98,13 +101,25 @@
             </div>
             <input type="time" id="mandatory-break" class="transparent input-inline" value="00:30" />
         </div>
+        <div class="glass setting-card setting-card--metrics">
+            <div class="label-block">
+                <label class="setting-name">Visible metrics</label>
+            </div>
+            <div class="chip-selector">
+                <button type="button" class="mini-chip" data-chip="timeToGo">To go</button>
+                <button type="button" class="mini-chip" data-chip="today">Today</button>
+                <button type="button" class="mini-chip" data-chip="week">Week</button>
+                <button type="button" class="mini-chip" data-chip="flex">Flex</button>
+                <button type="button" class="mini-chip" data-chip="forecast">Flex forcasted</button>
+            </div>
+        </div>
         <div class="glass setting-card setting-card--theme">
             <div class="label-block">
                 <label class="setting-name">Theme</label>
             </div>
             <div class="swatch-grid" role="radiogroup" aria-label="Theme">
-                <button class="swatch swatch--blue-purple" data-theme="blue-purple" aria-label="Blue purple"></button>
                 <button class="swatch swatch--dark" data-theme="dark" aria-label="Dark"></button>
+                <button class="swatch swatch--blue-purple" data-theme="blue-purple" aria-label="Blue purple"></button>
                 <button class="swatch swatch--pinky-winky" data-theme="pinky-winky" aria-label="Pinky Winky"></button>
                 <button class="swatch swatch--orange" data-theme="orange" aria-label="Orange"></button>
                 <button class="swatch swatch--sunrise" data-theme="sunrise" aria-label="Sunrise"></button>

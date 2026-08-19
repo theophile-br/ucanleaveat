@@ -2,7 +2,7 @@ import { UCanLeaveAtModel, OvernightWorkError } from "../models/u-can-leave-at-m
 import { DateTimeUtils } from "../shared/date-time-utils.js";
 import { ATOSS_TITLE_MARKER, STORAGE_KEYS } from "../shared/constants.js";
 import { AtossRepository, ScrapeError } from "../data/atoss-repository.js";
-import { loadState, saveComputed, saveWorkRate, saveFullWorkTime, saveMandatoryBreak, saveWeekMinutes, saveTheme } from "./storage.js";
+import { loadState, saveComputed, saveWorkRate, saveFullWorkTime, saveMandatoryBreak, saveWeekMinutes, saveChipVisibility, saveTheme } from "./storage.js";
 import {
     updateUI,
     setLoading,
@@ -11,6 +11,7 @@ import {
     setWorkRateValue,
     setFullWorkTimeValue,
     setMandatoryBreakValue,
+    setChipVisibilityValue,
     setEmploymentPreview,
     setOnAtoss,
     setTheme,
@@ -24,6 +25,7 @@ let currentRecords = null;
 let currentWeekPastMinutes = null;
 let currentFlexTime = null;
 let currentLastUpdate = null;
+let currentChipVisibility = null;
 let tickerId = null;
 
 document.addEventListener("DOMContentLoaded", init);
@@ -35,6 +37,8 @@ async function init() {
     setWorkRateValue(state.workRate);
     setFullWorkTimeValue(state.fullWorkTime);
     setMandatoryBreakValue(state.mandatoryBreak);
+    currentChipVisibility = state.chipVisibility;
+    setChipVisibilityValue(currentChipVisibility);
     refreshEmploymentPreview();
 
     const isToday = DateTimeUtils.isToday(state.lastUpdate);
@@ -62,6 +66,7 @@ function wireEvents() {
     $("mandatory-break").addEventListener("change", onSettingsChange);
     $("settings-toggle").addEventListener("click", toggleSettings);
     document.querySelectorAll(".swatch").forEach(el => el.addEventListener("click", onThemeClick));
+    document.querySelectorAll(".mini-chip").forEach(el => el.addEventListener("click", onMiniChipClick));
 }
 
 async function onThemeClick(e) {
@@ -135,6 +140,7 @@ async function recompute({ persist = false } = {}) {
             timeToGo: model.formatTimeToGo(result.timeToGo),
             todayMinutes: result.todayMinutes,
             weekMinutes: result.weekMinutes,
+            chipVisibility: currentChipVisibility,
         });
         if (persist) {
             await saveComputed({ time: result.leavingTime, breakTime: result.breakTime });
@@ -199,5 +205,14 @@ async function onSettingsChange() {
     await saveFullWorkTime(currentFullWorkTime());
     await saveMandatoryBreak(currentMandatoryBreak());
     refreshEmploymentPreview();
+    await recompute({ persist: true });
+}
+
+async function onMiniChipClick(e) {
+    const id = e.currentTarget.dataset.chip;
+    if (!id) return;
+    currentChipVisibility = { ...currentChipVisibility, [id]: currentChipVisibility?.[id] === false };
+    await saveChipVisibility(currentChipVisibility);
+    setChipVisibilityValue(currentChipVisibility);
     await recompute({ persist: true });
 }

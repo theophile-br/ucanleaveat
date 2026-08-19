@@ -21,7 +21,7 @@ export function setOnAtoss(isOnAtoss) {
     $("update").disabled = !isOnAtoss;
 }
 
-export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo, weekMinutes, todayMinutes } = {}) {
+export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo, weekMinutes, todayMinutes, chipVisibility } = {}) {
     if (lastUpdate != null) {
         const isToday = DateTimeUtils.isToday(lastUpdate);
         $("result-block").style.display = isToday ? "block" : "none";
@@ -29,46 +29,46 @@ export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForeca
         $("last-update").textContent = DateTimeUtils.formatByTimestamp(lastUpdate);
     }
 
+    if (time != null) {
+        $("result").textContent = DateTimeUtils.convertMinutesToTime(time);
+        $("break").textContent = breakTime > 0 ? `incl. ${breakTime}min break` : "";
+    }
+
+    const visible = chipVisibility ?? {};
+    const showChip = (id, hasData) => visible[id] !== false && hasData;
+
+    $("flex-chip").style.display = showChip("flex", flexTime != null) ? "" : "none";
     if (flexTime != null) {
         $("flextime").textContent = DateTimeUtils.convertMinutesToTime(flexTime);
     }
 
-    if (time != null) {
-        $("result").textContent = DateTimeUtils.convertMinutesToTime(time);
-        $("break").textContent = breakTime > 0 ? `including ${breakTime} min break` : "";
-    }
-
-    if (flextimeForecast != null) {
-        $("flextime-forcast-value").textContent = DateTimeUtils.convertMinutesToTime(flextimeForecast);
+    if (flextimeForecast !== undefined) {
+        $("forecast-chip").style.display = showChip("forecast", flextimeForecast != null) ? "" : "none";
+        if (flextimeForecast != null) {
+            $("flextime-forcast-value").textContent = DateTimeUtils.convertMinutesToTime(flextimeForecast);
+        }
     }
 
     if (todayMinutes !== undefined) {
-        const wrap = $("today-metric");
-        if (todayMinutes == null) {
-            wrap.style.display = "none";
-        } else {
-            wrap.style.display = "";
+        $("today-metric").style.display = showChip("today", todayMinutes != null) ? "" : "none";
+        if (todayMinutes != null) {
             $("today-worked").textContent = DateTimeUtils.convertMinutesToTime(todayMinutes);
         }
     }
 
     if (weekMinutes !== undefined) {
-        const wrap = $("week-metric");
-        if (weekMinutes == null) {
-            wrap.style.display = "none";
-        } else {
-            wrap.style.display = "";
+        $("week-metric").style.display = showChip("week", weekMinutes != null) ? "" : "none";
+        if (weekMinutes != null) {
             $("week-progress").textContent = DateTimeUtils.convertMinutesToTime(weekMinutes);
         }
     }
 
     if (timeToGo !== undefined) {
-        const el = $("time-to-go");
-        if (timeToGo == null) {
-            el.style.display = "none";
-        } else {
-            el.style.display = "inline-block";
-            el.innerHTML = `<strong>${DateTimeUtils.convertMinutesToTime(timeToGo.minutes)}</strong> <span class="info">${timeToGo.label}</span>`;
+        const chip = $("time-to-go-chip");
+        chip.style.display = showChip("timeToGo", timeToGo != null) ? "" : "none";
+        if (timeToGo != null) {
+            chip.querySelector(".chip-label").textContent = timeToGo.label === "extra time" ? "Extra" : "To go";
+            $("time-to-go").textContent = DateTimeUtils.convertMinutesToTime(timeToGo.minutes);
         }
     }
 }
@@ -83,6 +83,13 @@ export function setFullWorkTimeValue(minutes) {
 
 export function setMandatoryBreakValue(minutes) {
     $("mandatory-break").value = DateTimeUtils.convertMinutesToTime(minutes);
+}
+
+export function setChipVisibilityValue(config) {
+    document.querySelectorAll(".mini-chip").forEach(el => {
+        const id = el.dataset.chip;
+        el.classList.toggle("is-off", config?.[id] === false);
+    });
 }
 
 export function setTheme(theme) {

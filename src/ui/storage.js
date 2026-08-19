@@ -1,4 +1,4 @@
-import { STORAGE_KEYS, DEFAULT_FULL_WORK_TIME_MINUTES, DEFAULT_MANDATORY_BREAK_MINUTES, DEFAULT_THEME } from "../shared/constants.js";
+import { STORAGE_KEYS, DEFAULT_FULL_WORK_TIME_MINUTES, DEFAULT_MANDATORY_BREAK_MINUTES, DEFAULT_THEME, DEFAULT_CHIP_VISIBILITY } from "../shared/constants.js";
 
 export async function loadState() {
     const all = await chrome.storage.local.get(Object.values(STORAGE_KEYS));
@@ -12,12 +12,17 @@ export async function loadState() {
         mandatoryBreak: all[STORAGE_KEYS.MANDATORY_BREAK] ?? DEFAULT_MANDATORY_BREAK_MINUTES,
         records: all[STORAGE_KEYS.RECORDS] ?? null,
         weekMinutes: all[STORAGE_KEYS.WEEK_MINUTES] ?? null,
+        chipVisibility: { ...DEFAULT_CHIP_VISIBILITY, ...(all[STORAGE_KEYS.CHIP_VISIBILITY] ?? {}) },
         theme: all[STORAGE_KEYS.THEME] ?? DEFAULT_THEME,
     };
 }
 
 export function saveWeekMinutes(weekMinutes) {
     return chrome.storage.local.set({ [STORAGE_KEYS.WEEK_MINUTES]: weekMinutes });
+}
+
+export function saveChipVisibility(chipVisibility) {
+    return chrome.storage.local.set({ [STORAGE_KEYS.CHIP_VISIBILITY]: chipVisibility });
 }
 
 export function saveComputed({ time, breakTime }) {
