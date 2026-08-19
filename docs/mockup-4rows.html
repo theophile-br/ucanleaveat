@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup — 4-row compact</title>
+    <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        html,
+        body.stage {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #1e1e2f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 4-row layout:
+           R1 = last-updated
+           R2 = leaving time + break inline
+           R3 = to-go / flex / forecast / today / week   (chip row)
+           R4 = update button                                */
+        .popup-frame {
+            width: 440px;
+            padding: 14px 18px;
+            color: #d8dde3;
+            box-sizing: border-box;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            /* Dark, muted palette — subtle drift between near-black tones. */
+            --grad-1: #16181f;
+            --grad-2: #1e222b;
+            --grad-3: #262b36;
+        }
+
+        /* Gear flows in R1 rather than floating at the corner. */
+        .popup-frame .settings-toggle {
+            position: static;
+            width: 22px;
+            height: 22px;
+        }
+
+        .popup-frame .settings-toggle svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.6;
+        }
+
+        /* R1 — timestamp left, gear right */
+        .r1-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin: 0 0 6px;
+        }
+
+        .r1-updated {
+            font-size: 0.7rem;
+            opacity: 0.55;
+            margin: 0;
+            text-align: left;
+        }
+
+        /* R2 — hero */
+        .r2-hero {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 8px;
+            margin: 4px 0 10px;
+        }
+
+        .r2-hero .hero-lead {
+            font-size: 0.72rem;
+            opacity: 0.7;
+        }
+
+        .r2-hero .hero-time {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+        }
+
+        .r2-hero .break-note {
+            font-size: 0.72rem;
+            opacity: 0.7;
+        }
+
+        /* R3 — metric chips */
+        .r3-chips {
+            display: flex;
+            gap: 4px;
+            margin: 0 0 10px;
+        }
+
+        .chip {
+            flex: 1;
+            padding: 6px 4px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 8px;
+            min-width: 0;
+        }
+
+        .chip-label {
+            display: block;
+            font-size: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            opacity: 0.6;
+        }
+
+        .chip-value {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-top: 2px;
+            white-space: nowrap;
+        }
+
+        /* R4 */
+        .r4-action {
+            display: flex;
+            justify-content: center;
+        }
+
+        .r4-action .btn.transparent {
+            padding: 6px 24px;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body class="stage">
+    <div class="popup-frame gradient-anim">
+        <div class="view">
+            <!-- R1: last update on the left, gear icon on the right -->
+            <div class="r1-row">
+                <span class="r1-updated">updated Thursday 24 December at 14:32</span>
+                <button class="settings-toggle" aria-label="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
+                        fill="currentColor">
+                        <path
+                            d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0" />
+                        <path
+                            d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- R2: leaving time + break inline -->
+            <p class="r2-hero">
+                <span class="hero-lead">Estimated leaving time</span>
+                <span class="hero-time">17:42</span>
+                <span class="break-note">incl. 30min break</span>
+            </p>
+
+            <!-- R3: metrics chips (weekly optional) -->
+            <div class="r3-chips">
+                <div class="chip">
+                    <span class="chip-label">To go</span>
+                    <span class="chip-value">02:40</span>
+                </div>
+                <div class="chip">
+                    <span class="chip-label">Today</span>
+                    <span class="chip-value">05:32</span>
+                </div>
+                <div class="chip">
+                    <span class="chip-label">Week</span>
+                    <span class="chip-value">37:58</span>
+                </div>
+                <div class="chip">
+                    <span class="chip-label">Flex</span>
+                    <span class="chip-value">+04:15</span>
+                </div>
+                <div class="chip">
+                    <span class="chip-label">Flex forcasted</span>
+                    <span class="chip-value">+01:35</span>
+                </div>
+            </div>
+
+            <!-- R4: update button -->
+            <div class="r4-action">
+                <button class="btn transparent">Update</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

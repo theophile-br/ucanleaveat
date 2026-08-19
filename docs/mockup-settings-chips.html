@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup — Settings with chip visibility row</title>
+    <link href="../bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="../styles.css" rel="stylesheet">
+    <style>
+        html,
+        body.stage {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #1e1e2f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Same shell as the main mockup so the review is visually consistent. */
+        .popup-frame {
+            width: 440px;
+            padding: 14px 18px;
+            color: #d8dde3;
+            box-sizing: border-box;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            --grad-1: #16181f;
+            --grad-2: #1e222b;
+            --grad-3: #262b36;
+        }
+
+        .popup-frame .settings-toggle {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            width: 22px;
+            height: 22px;
+        }
+
+        .popup-frame .settings-toggle svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.6;
+        }
+
+        /* Visible-metrics card: label on top, chip row underneath.
+           Each mini-chip is a clickable button that toggles show/hide. */
+        .setting-card--metrics {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .setting-card--metrics .label-block {
+            text-align: left;
+        }
+
+        .chip-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: flex-start;
+        }
+
+        .mini-chip {
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+            transition: background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #eef2f6;
+        }
+
+        .mini-chip.is-off {
+            background: transparent;
+            border: 1px dashed rgba(255, 255, 255, 0.25);
+            color: rgba(238, 242, 246, 0.45);
+        }
+
+        .mini-chip:hover {
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .mini-chip.is-off:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(238, 242, 246, 0.7);
+        }
+    </style>
+</head>
+
+<body class="stage settings-open">
+    <div class="popup-frame gradient-anim">
+        <button class="settings-toggle" aria-label="Close settings">
+            <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16"
+                fill="currentColor">
+                <path
+                    d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+            </svg>
+        </button>
+
+        <div class="view">
+            <p class="settings-title">Settings</p>
+
+            <div class="glass setting-card">
+                <div class="label-block">
+                    <label class="setting-name">Employment</label>
+                    <span class="setting-preview">06:34 per day</span>
+                </div>
+                <input type="number" class="transparent input-work-rate" value="80" min="50" max="100" step="10" />
+            </div>
+
+            <div class="glass setting-card">
+                <div class="label-block">
+                    <label class="setting-name">Daily hours</label>
+                </div>
+                <input type="time" class="transparent input-inline" value="08:12" />
+            </div>
+
+            <div class="glass setting-card">
+                <div class="label-block">
+                    <label class="setting-name">Mandatory break</label>
+                </div>
+                <input type="time" class="transparent input-inline" value="00:30" />
+            </div>
+
+            <!-- NEW: chip visibility card. Replaces the standalone Weekly overview toggle. -->
+            <div class="glass setting-card setting-card--metrics">
+                <div class="label-block">
+                    <label class="setting-name">Visible metrics</label>
+                </div>
+                <div class="chip-selector">
+                    <button type="button" class="mini-chip">To go</button>
+                    <button type="button" class="mini-chip">Today</button>
+                    <button type="button" class="mini-chip is-off">Week</button>
+                    <button type="button" class="mini-chip">Flex</button>
+                    <button type="button" class="mini-chip is-off">Flex forcasted</button>
+                </div>
+            </div>
+
+            <div class="glass setting-card setting-card--theme">
+                <div class="label-block">
+                    <label class="setting-name">Theme</label>
+                </div>
+                <div class="swatch-grid" role="radiogroup" aria-label="Theme">
+                    <button class="swatch swatch--blue-purple" aria-label="Blue purple"></button>
+                    <button class="swatch swatch--dark is-selected" aria-label="Dark"></button>
+                    <button class="swatch swatch--pinky-winky" aria-label="Pinky Winky"></button>
+                    <button class="swatch swatch--orange" aria-label="Orange"></button>
+                    <button class="swatch swatch--sunrise" aria-label="Sunrise"></button>
+                    <button class="swatch swatch--green" aria-label="Green"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
