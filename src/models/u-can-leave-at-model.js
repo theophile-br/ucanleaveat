@@ -46,7 +46,11 @@ export class UCanLeaveAtModel {
             ? this.#getFlextimeForcast(flexTime, todayMinutes, targetMinutes)
             : null;
 
-        return { leavingTime, breakTime, todayMinutes, timeToGo, weekMinutes, flextimeForecast };
+        const dayOfWeek = new Date().getDay()
+        const daysWorked = dayOfWeek >= 1 && dayOfWeek <= 5 ? dayOfWeek : 0;
+        const weeklyFlex = weekPastMinutes - targetMinutes * (dayOfWeek - 1); 
+
+        return { leavingTime, breakTime, todayMinutes, timeToGo, weekMinutes, flextimeForecast, weeklyFlex };
     }
 
     formatTimeToGo(timeToGo) {

@@ -141,6 +141,7 @@ async function recompute({ persist = false } = {}) {
             todayMinutes: result.todayMinutes,
             weekMinutes: result.weekMinutes,
             chipVisibility: currentChipVisibility,
+            weeklyFlex: result.weeklyFlex,
         });
         if (persist) {
             await saveComputed({ time: result.leavingTime, breakTime: result.breakTime });

@@ -53,13 +53,17 @@
                     <span class="chip-label">Today</span>
                     <span id="today-worked" class="chip-value"></span>
                 </div>
-                <div id="week-metric" class="chip" data-toggle="tooltip" data-placement="bottom" title="Total time worked since Monday" style="display:none">
+                <div id="week-metric" class="chip" data-toggle="tooltip" data-placement="bottom" title="Total time so far this week" style="display:none">
                     <span class="chip-label">Week</span>
                     <span id="week-progress" class="chip-value"></span>
                 </div>
                 <div id="flex-chip" class="chip" data-toggle="tooltip" data-placement="bottom" title="Your current flextime balance">
                     <span class="chip-label">Flex</span>
                     <span id="flextime" class="chip-value"></span>
+                </div>
+                <div id="weekly-flex-chip" class="chip" data-toggle="tooltip" data-placement="bottom" title="Your current flextime balance built this week">
+                    <span class="chip-label">Weekly Flex</span>
+                    <span id="weekly-flex-value" class="chip-value"></span>
                 </div>
                 <div id="forecast-chip" class="chip" data-toggle="tooltip" data-placement="bottom" title="Flextime balance if you clock out now">
                     <span class="chip-label">Flex forcasted</span>
@@ -106,11 +110,12 @@
                 <label class="setting-name">Visible metrics</label>
             </div>
             <div class="chip-selector">
-                <button type="button" class="mini-chip" data-chip="timeToGo">To go</button>
-                <button type="button" class="mini-chip" data-chip="today">Today</button>
-                <button type="button" class="mini-chip" data-chip="week">Week</button>
-                <button type="button" class="mini-chip" data-chip="flex">Flex</button>
-                <button type="button" class="mini-chip" data-chip="forecast">Flex forcasted</button>
+                <button type="button" class="mini-chip" data-chip="timeToGo" data-toggle="tooltip" data-placement="bottom" title="Difference from your daily target">To go</button>
+                <button type="button" class="mini-chip" data-chip="today" data-toggle="tooltip" data-placement="bottom" title="Time worked so far today">Today</button>
+                <button type="button" class="mini-chip" data-chip="week" data-toggle="tooltip" data-placement="bottom" title="Total time so far this week">Week</button>
+                <button type="button" class="mini-chip" data-chip="flex" data-toggle="tooltip" data-placement="bottom" title="Your current flextime balance">Flex</button>
+                <button type="button" class="mini-chip" data-chip="weeklyFlex" data-toggle="tooltip" data-placement="bottom" title="Your current flextime balance built this week">Weekly flex</button>
+                <button type="button" class="mini-chip" data-chip="forecast" data-toggle="tooltip" data-placement="bottom" title="Flextime balance if you clock out now">Flex forcasted</button>
             </div>
         </div>
         <div class="glass setting-card setting-card--theme">

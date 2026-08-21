@@ -11,6 +11,7 @@ export const DEFAULT_CHIP_VISIBILITY = {
     forecast: true,
     today: true,
     week: true,
+    weeklyFlex: false,
 };
 
 export const THEMES = ["blue-purple", "dark", "pinky-winky", "orange", "sunrise", "green"];

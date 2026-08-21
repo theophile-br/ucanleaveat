@@ -21,7 +21,7 @@ export function setOnAtoss(isOnAtoss) {
     $("update").disabled = !isOnAtoss;
 }
 
-export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo, weekMinutes, todayMinutes, chipVisibility } = {}) {
+export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForecast, timeToGo, weekMinutes, todayMinutes, chipVisibility, weeklyFlex } = {}) {
     if (lastUpdate != null) {
         const isToday = DateTimeUtils.isToday(lastUpdate);
         $("result-block").style.display = isToday ? "block" : "none";
@@ -69,6 +69,13 @@ export function updateUI({ lastUpdate, time, breakTime, flexTime, flextimeForeca
         if (timeToGo != null) {
             chip.querySelector(".chip-label").textContent = timeToGo.label === "extra time" ? "Extra" : "To go";
             $("time-to-go").textContent = DateTimeUtils.convertMinutesToTime(timeToGo.minutes);
+        }
+    }
+
+    if (weeklyFlex !== undefined) {
+        $("weekly-flex-chip").style.display = showChip("weeklyFlex", flextimeForecast != null) ? "" : "none";
+        if (weeklyFlex != null) {
+            $("weekly-flex-value").textContent = DateTimeUtils.convertMinutesToTime(weeklyFlex);
         }
     }
 }
